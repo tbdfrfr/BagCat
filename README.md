@@ -16,9 +16,21 @@
 
 
 BagCat Is an online proxy service that gets around those <i>Pesky<i> web filters! 
-Games currently included:
 
-
-Discord:
+<details>
+  <summary>Games/apps currently included:</summary>
+  
+  1. GeForce now
+  2. Retro bowl
+  3. Twitch
+  4. Youtube
+  5. tiktok
+  6. Discord
+  7. Netflix
+  8. and many other browser games :3
+</details>
+<br>
+<br>
+Join our discord to request games/features, report bugs, and join the community! [Discord link]
 
 
