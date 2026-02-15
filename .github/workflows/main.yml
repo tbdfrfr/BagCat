@@ -33,7 +33,7 @@ jobs:
           STATIC: "true"
           BARE: "false"
           BASE_PATH: "/${{ github.event.repository.name }}/"
-        run: node server.js
+        run: npm run build
 
       - name: Pages config
         uses: actions/configure-pages@v5
