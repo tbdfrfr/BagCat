@@ -16,6 +16,18 @@ import dotenv from 'dotenv';
 dotenv.config();
 const useBare = process.env.BARE === 'false' ? false : true;
 const isStatic = process.env.STATIC === 'true';
+const repoName = process.env.GITHUB_REPOSITORY?.split('/')?.[1];
+const basePath =
+  process.env.BASE_PATH ||
+  (process.env.GITHUB_ACTIONS && repoName ? `/${repoName}/` : '/');
+
+const normalizeBase = (p) => {
+  if (!p) return '/';
+  let out = p.startsWith('/') ? p : `/${p}`;
+  if (!out.endsWith('/')) out += '/';
+  return out;
+};
+const base = normalizeBase(basePath);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 logging.set_level(logging.NONE);
@@ -62,6 +74,7 @@ export default defineConfig(({ command }) => {
   const environment = isStatic ? 'static' : command === 'serve' ? 'dev' : 'stable';
 
   return {
+    base,
     plugins: [
       react(),
       command === 'build' && vitePluginBundleObfuscator(obf),
@@ -189,7 +202,7 @@ export default defineConfig(({ command }) => {
     },
     define: {
       __ENVIRONMENT__: JSON.stringify(environment),
-      'isStaticBuild': 'false'
+      isStaticBuild: JSON.stringify(isStatic),
     },
   };
 });
