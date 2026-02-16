@@ -41,66 +41,90 @@ const encoding = {
       }
       return new TextDecoder().decode(o) + s.slice(h);
     } catch {
-      return decodeURIComponent(s);
+      try {
+        return decodeURIComponent(s);
+      } catch {
+        return s;
+      }
     }
   },
 };
 
 const base = import.meta.env.BASE_URL || '/';
 const withBase = (p) => `${base}${String(p || '').replace(/^\/+/, '')}`;
+const DEFAULT_ENGINE = 'https://www.google.com/search?q=';
+
+const normalizeEngine = (engine) => {
+  if (typeof engine !== 'string') return DEFAULT_ENGINE;
+  const trimmed = engine.trim();
+  return /^https?:\/\//i.test(trimmed) ? trimmed : DEFAULT_ENGINE;
+};
+
+const isLikelyHost = (value) =>
+  /^(localhost(?::\d+)?|[\w-]+(?:\.[\w-]+)+(?::\d+)?)(?:\/|$)/i.test(value);
 
 const check = (inp, engine) => {
-  const trimmed = inp.trim();
+  const trimmed = typeof inp === 'string' ? inp.trim() : String(inp || '').trim();
   if (!trimmed) return '';
 
-  const isUrl =
-    /^https?:\/\//i.test(trimmed) ||
-    /^[\w-]+\.[\w.-]+/i.test(trimmed) ||
-    trimmed.startsWith('localhost');
-
-  if (isUrl) {
-    return trimmed.startsWith('http') ? trimmed : `https://${trimmed}`;
-  } else {
-    return engine + encodeURIComponent(trimmed);
-  }
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (trimmed.startsWith('//')) return `https:${trimmed}`;
+  if (isLikelyHost(trimmed)) return `https://${trimmed}`;
+  return normalizeEngine(engine) + encodeURIComponent(trimmed);
 };
 
 import whitelist from '/src/data/whitelist.json';
-import appsData from '/src/data/apps.json';
+const scrwlist = new Set((whitelist || []).map((d) => String(d || '').replace(/^www\./, '').toLowerCase()));
 
-const scrwlist = new Set([
-  ...whitelist,
-  ...Object.values(appsData.games || {}).flatMap(cat => 
-    cat.filter(g => g.url && !g.local).map(g => {
-      try { return new URL(g.url.startsWith('http') ? g.url : `https://${g.url}`).hostname.replace(/^www\./, ''); }
-      catch { return null; }
-    }).filter(Boolean)
-  )
-]);
+const useScrForHost = (url) => {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, '').toLowerCase();
+    if (host === 'localhost' || host.endsWith('.localhost')) return false;
+    if (host.endsWith('.io')) return true;
+    return [...scrwlist].some((domain) => host === domain || host.endsWith(`.${domain}`));
+  } catch {
+    return false;
+  }
+};
 
-export const process = (input, decode = false, prType, engine = "https://www.google.com/search?q=") => {
-  let mode;
-
+export const resolveProxyMode = (input, prType = 'auto', engine = DEFAULT_ENGINE) => {
   switch (prType) {
     case 'uv':
-      mode = 'uv';
-      break;
+      return 'uv';
     case 'scr':
-      mode = 'scr';
-      break;
-    default:
+      return 'scr';
+    case 'direct':
+      return 'direct';
+    default: {
       const url = check(input, engine);
-      const match = [...scrwlist].some(d => url.includes(d));
-      mode = match ? 'scr' : 'uv';
+      return useScrForHost(url) ? 'scr' : 'uv';
+    }
   }
+};
+
+export const process = (input, decode = false, prType = 'auto', engine = DEFAULT_ENGINE) => {
+  const searchEngine = normalizeEngine(engine);
 
   if (decode) {
-    const uvPart = input.split('/uv/service/')[1];
-    const scrPart = input.split('/scramjet/')[1];
-    const decoded = uvPart ? encoding.dnc(uvPart) : scrPart ? decodeURIComponent(scrPart) : input;
+    const safeInput = typeof input === 'string' ? input : String(input || '');
+    const uvPart = safeInput.split('/uv/service/')[1];
+    const scrPart = safeInput.split('/scramjet/')[1];
+    let decoded = safeInput;
+    if (uvPart) {
+      decoded = encoding.dnc(uvPart);
+    } else if (scrPart) {
+      try {
+        decoded = decodeURIComponent(scrPart);
+      } catch {
+        decoded = scrPart;
+      }
+    }
     return decoded.endsWith('/') ? decoded.slice(0, -1) : decoded;
   } else {
-    const final = check(input, engine);
+    const final = check(input, searchEngine);
+    if (!final) return '';
+    const mode = resolveProxyMode(final, prType, searchEngine);
+    if (mode === 'direct') return final;
     const prefix = mode === 'scr' ? withBase('scramjet/') : withBase('uv/service/');
     const encoded = mode === 'scr' ? encodeURIComponent(final) : encoding.enc(final);
     return `${location.protocol}//${location.host}${prefix}${encoded}`;
