@@ -4,6 +4,8 @@ const DB_NAME = 'gm loader db';
 const DB_VER = 1;
 const STORE_NAME = 'gms';
 const TEXT_EXTS = new Set(['html', 'htm', 'css', 'js', 'mjs', 'json', 'xml', 'txt', 'md', 'csv', 'svg']);
+const base = import.meta.env.BASE_URL || '/';
+const withBase = (p) => `${base}${String(p || '').replace(/^\\//, '')}`;
 
 class LocalGmLoader {
   constructor() {
@@ -172,7 +174,7 @@ class LocalGmLoader {
       let existing = regs.find(r => r.active?.scriptURL.includes('/loadersw.js'));
       
       if (!existing) {
-        const reg = await navigator.serviceWorker.register('/loadersw.js');
+        const reg = await navigator.serviceWorker.register(withBase('loadersw.js'));
         await navigator.serviceWorker.ready;
         return reg;
       }
@@ -203,7 +205,7 @@ class LocalGmLoader {
     
     if (existing) {
       await this.updateLastPlayed(gmName);
-      return { url: `/game/${gmName}/index.html`, cached: true };
+      return { url: withBase(`game/${gmName}/index.html`), cached: true };
     }
 
     if (onDownload) onDownload(true);
@@ -215,7 +217,7 @@ class LocalGmLoader {
     await this.saveGm(gmName, files);
     if (onDownload) onDownload(false);
     
-    return { url: `/game/${gmName}/index.html`, cached: false };
+    return { url: withBase(`game/${gmName}/index.html`), cached: false };
   }
 }
 

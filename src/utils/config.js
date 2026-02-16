@@ -1,9 +1,22 @@
+const base = import.meta.env.BASE_URL || '/';
+const withBase = (p) => `${base}${String(p || '').replace(/^\\//, '')}`;
+
+// In static (GitHub Pages) builds we don't have a backend to proxy `/assets/*`,
+// so point these icons directly at the CDN used elsewhere in the static build.
+const assetCdn = 'https://cdn.jsdelivr.net/gh/DogeNetwork/v5-assets/img/';
+const isStatic = typeof isStaticBuild !== 'undefined' && isStaticBuild;
+const assetIcon = (p) => {
+  const path = String(p || '');
+  if (isStatic) return assetCdn + path.replace(/^\\/assets\\/img\\//, '');
+  return withBase(path);
+};
+
 export const meta = [
   {
     option: 'Default',
     value: {
       tabName: 'BagCat',
-      tabIcon: '/header-image.png',
+      tabIcon: withBase('header-image.png'),
     },
   },
   {
@@ -24,56 +37,56 @@ export const meta = [
     option: 'Gmail',
     value: {
       tabName: 'Gmail',
-      tabIcon: '/assets/img/gmail.ico',
+      tabIcon: assetIcon('/assets/img/gmail.ico'),
     },
   },
   {
     option: 'Wikipedia',
     value: {
       tabName: 'Wikipedia',
-      tabIcon: '/assets/img/wikipedia.ico',
+      tabIcon: assetIcon('/assets/img/wikipedia.ico'),
     },
   },
   {
     option: 'Schoology',
     value: {
       tabName: 'Home | Schoology',
-      tabIcon: '/assets/img/schoology.ico',
+      tabIcon: assetIcon('/assets/img/schoology.ico'),
     },
   },
   {
     option: 'Google Classroom',
     value: {
       tabName: 'Home',
-      tabIcon: '/assets/img/classroom.png',
+      tabIcon: assetIcon('/assets/img/classroom.png'),
     },
   },
   {
     option: 'ClassLink',
     value: {
       tabName: 'ClassLink',
-      tabIcon: '/assets/img/classlink.ico',
+      tabIcon: assetIcon('/assets/img/classlink.ico'),
     },
   },
   {
     option: 'Quizlet',
     value: {
       tabName: 'Quizlet: Study Tools & Learning Resources for Students and Teachers | Quizlet',
-      tabIcon: '/assets/img/quizlet.png',
+      tabIcon: assetIcon('/assets/img/quizlet.png'),
     },
   },
   {
     option: 'Big Ideas Math',
     value: {
       tabName: 'Big Ideas Math',
-      tabIcon: '/assets/img/bigideasmath.ico',
+      tabIcon: assetIcon('/assets/img/bigideasmath.ico'),
     },
   },
   {
     option: 'Khan Academy',
     value: {
       tabName: 'Dashboard | Khan Academy',
-      tabIcon: '/assets/img/khan.png',
+      tabIcon: assetIcon('/assets/img/khan.png'),
     },
   },
 ];

@@ -57,7 +57,18 @@ function findFile(files, requestedPath) {
 
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
-  const match = url.pathname.match(/^\/game\/([^\/]+)\/(.+)$/);
+  const scopeUrl = new URL(self.registration.scope);
+  let scopePath = scopeUrl.pathname;
+  if (!scopePath.endsWith('/')) scopePath += '/';
+
+  // Make the matcher work both at `/game/...` (local) and `/<base>/game/...` (GitHub Pages).
+  let path = url.pathname;
+  if (path.startsWith(scopePath)) {
+    // Keep a leading slash for downstream matching.
+    path = path.slice(scopePath.length - 1);
+  }
+
+  const match = path.match(/^\/game\/([^\/]+)\/(.+)$/);
   
   if (match) {
     const gameId = match[1];

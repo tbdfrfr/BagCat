@@ -7,7 +7,8 @@ if (navigator.userAgent.includes('Firefox')) {
   });
 }
 
-importScripts('/scram/scramjet.all.js');
+// Resolve Scramjet assets relative to this SW script so it works under a base path (GitHub Pages).
+importScripts(new URL('scram/scramjet.all.js', self.location.href).toString());
 const { ScramjetServiceWorker } = $scramjetLoadWorker();
 const scramjet = new ScramjetServiceWorker();
 

@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { memo, useMemo, useCallback } from 'react';
 
 const version = 'v1.1';
+const headerImageSrc = `${import.meta.env.BASE_URL}header-image.png`;
 
 const Nav = memo(() => {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ const Nav = memo(() => {
     >
       <button type="button" onClick={goMainMenu} className="flex items-center gap-2 cursor-pointer">
         <img
-          src="/header-image.png"
+          src={headerImageSrc}
           alt="Header"
           className="rounded-md object-cover"
           style={{ width: `${dimensions.imageSize}px`, height: `${dimensions.imageSize}px` }}

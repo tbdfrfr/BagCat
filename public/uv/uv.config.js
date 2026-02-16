@@ -1,6 +1,22 @@
 const k = new TextEncoder().encode(btoa(new Date().toISOString().slice(0, 10) + location.host).split('').reverse().join('').slice(6.7));
+
+// Derive the `/uv/` directory from the config script URL so this works under a base path (GitHub Pages).
+const scriptUrl = (() => {
+    try {
+        if (typeof document !== 'undefined' && document.currentScript && document.currentScript.src) {
+            return document.currentScript.src;
+        }
+    } catch { }
+    try {
+        // In SW/worker contexts, `document` doesn't exist, but `self.location` does.
+        if (typeof self !== 'undefined' && self.location && self.location.href) return self.location.href;
+    } catch { }
+    return location.href;
+})();
+const uvDir = new URL('.', scriptUrl).pathname;
+
 self.__uv$config = {
-    prefix: "/uv/service/",
+    prefix: uvDir + "service/",
     encodeUrl: s => {
         if (!s) return s;
         try {
@@ -28,9 +44,9 @@ self.__uv$config = {
             return new TextDecoder().decode(o) + s.slice(h);
         } catch { return decodeURIComponent(s); }
     },
-    handler: "/uv/uv.handler.js",
-    client: "/uv/uv.client.js", 
-    bundle: "/uv/uv.bundle.js",
-    config: "/uv/uv.config.js",
-    sw: "/uv/uv.sw.js"
+    handler: uvDir + "uv.handler.js",
+    client: uvDir + "uv.client.js",
+    bundle: uvDir + "uv.bundle.js",
+    config: uvDir + "uv.config.js",
+    sw: uvDir + "uv.sw.js"
 };

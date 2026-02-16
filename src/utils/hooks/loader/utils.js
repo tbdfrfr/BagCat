@@ -46,6 +46,9 @@ const encoding = {
   },
 };
 
+const base = import.meta.env.BASE_URL || '/';
+const withBase = (p) => `${base}${String(p || '').replace(/^\\//, '')}`;
+
 const check = (inp, engine) => {
   const trimmed = inp.trim();
   if (!trimmed) return '';
@@ -76,19 +79,19 @@ const scrwlist = new Set([
 ]);
 
 export const process = (input, decode = false, prType, engine = "https://www.google.com/search?q=") => {
-  let prefix;
+  let mode;
 
   switch (prType) {
     case 'uv':
-      prefix = '/uv/service/';
+      mode = 'uv';
       break;
     case 'scr':
-      prefix = '/scramjet/';
+      mode = 'scr';
       break;
     default:
       const url = check(input, engine);
       const match = [...scrwlist].some(d => url.includes(d));
-      prefix = match ? '/scramjet/' : '/uv/service/';
+      mode = match ? 'scr' : 'uv';
   }
 
   if (decode) {
@@ -98,7 +101,8 @@ export const process = (input, decode = false, prType, engine = "https://www.goo
     return decoded.endsWith('/') ? decoded.slice(0, -1) : decoded;
   } else {
     const final = check(input, engine);
-    const encoded = prefix === '/scramjet/' ? encodeURIComponent(final) : encoding.enc(final);
+    const prefix = mode === 'scr' ? withBase('scramjet/') : withBase('uv/service/');
+    const encoded = mode === 'scr' ? encodeURIComponent(final) : encoding.enc(final);
     return `${location.protocol}//${location.host}${prefix}${encoded}`;
   }
 };
