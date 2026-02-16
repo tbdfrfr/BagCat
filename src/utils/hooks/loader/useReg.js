@@ -5,7 +5,7 @@ import { fetchW as returnWServer } from './findWisp';
 import store from './useLoaderStore';
 
 const base = import.meta.env.BASE_URL || '/';
-const withBase = (p) => `${base}${String(p || '').replace(/^\\//, '')}`;
+const withBase = (p) => `${base}${String(p || '').replace(/^\/+/, '')}`;
 
 export default function useReg() {
   const { options } = useOptions();

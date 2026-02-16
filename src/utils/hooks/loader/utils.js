@@ -47,7 +47,7 @@ const encoding = {
 };
 
 const base = import.meta.env.BASE_URL || '/';
-const withBase = (p) => `${base}${String(p || '').replace(/^\\//, '')}`;
+const withBase = (p) => `${base}${String(p || '').replace(/^\/+/, '')}`;
 
 const check = (inp, engine) => {
   const trimmed = inp.trim();

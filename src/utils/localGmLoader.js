@@ -5,7 +5,7 @@ const DB_VER = 1;
 const STORE_NAME = 'gms';
 const TEXT_EXTS = new Set(['html', 'htm', 'css', 'js', 'mjs', 'json', 'xml', 'txt', 'md', 'csv', 'svg']);
 const base = import.meta.env.BASE_URL || '/';
-const withBase = (p) => `${base}${String(p || '').replace(/^\\//, '')}`;
+const withBase = (p) => `${base}${String(p || '').replace(/^\/+/, '')}`;
 
 class LocalGmLoader {
   constructor() {
