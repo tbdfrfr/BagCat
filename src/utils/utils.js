@@ -1,8 +1,25 @@
 import pkg from '../../package.json';
 let blur, focus, panicListener;
 
+const getStoredOptions = () => {
+  try {
+    const raw = localStorage.getItem('options');
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+};
+
+const writeStoredOptions = (options) => {
+  try {
+    localStorage.setItem('options', JSON.stringify(options));
+  } catch {}
+};
+
 const ckOff = () => {
-  const op = JSON.parse(localStorage.options || '{}');
+  const op = getStoredOptions();
   import('./config.js').then(({ meta }) => {
     const { tabName: t, tabIcon: i } = op;
     const { tabName: ogName, tabIcon: ogIcon } = meta[0].value;
@@ -15,8 +32,8 @@ const ckOff = () => {
     if (op.clkOff) {
       set(t, i);
       blur = () => {
-        const op = JSON.parse(localStorage.options || '{}');
-        set(op.tabName || ogName, op.tabIcon || ogIcon);
+        const nextOptions = getStoredOptions();
+        set(nextOptions.tabName || ogName, nextOptions.tabIcon || ogIcon);
       };
       focus = () => set(ogName, ogIcon);
       window.addEventListener('blur', blur);
@@ -30,7 +47,7 @@ const ckOff = () => {
 };
 
 const panic = () => {
-  const op = JSON.parse(localStorage.options || '{}');
+  const op = getStoredOptions();
   const panicConfig = op.panic;
   if (panicListener) {
     window.removeEventListener('keydown', panicListener);
@@ -57,8 +74,10 @@ const panic = () => {
 };
 
 (() => {
-  const op = JSON.parse(localStorage.options || '{}');
-  !op.version && localStorage.setItem('options', JSON.stringify({ version: pkg.version }));
+  const op = getStoredOptions();
+  if (!op.version) {
+    writeStoredOptions({ ...op, version: pkg.version });
+  }
   if (op.beforeUnload) {
     window.addEventListener('beforeunload', (e) => {
       e.preventDefault();
@@ -83,9 +102,19 @@ const panic = () => {
       d.body.append(f);
       const s = d.createElement('script');
       s.textContent = `
+        const readOptions = () => {
+          try {
+            const raw = localStorage.getItem('options');
+            if (!raw) return {};
+            const parsed = JSON.parse(raw);
+            return parsed && typeof parsed === 'object' ? parsed : {};
+          } catch {
+            return {};
+          }
+        };
         const d = document;
         setInterval(() => {
-          const op = JSON.parse(localStorage.getItem('options') || '{}');
+          const op = readOptions();
           d.title = op.tabName || '';
           let icon = d.querySelector("link[rel~='icon']");
           if (!icon) {
