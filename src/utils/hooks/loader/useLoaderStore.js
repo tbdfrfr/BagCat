@@ -19,11 +19,9 @@ const store = create((set) => ({
   activeFrameRef: null,
   showUI: true,
   zoomLevels: {},
-  proxyReady: false,
   //only used if isStaticBuild == true
   wispStatus: null,
   setWispStatus: (bool) => set({ wispStatus: bool }),
-  setProxyReady: (ready) => set({ proxyReady: ready }),
   toggleUI: () => set((state) => ({ showUI: !state.showUI })),
   setZoom: (tabId, zoom, frameRef) => {
     const ifr = frameRef?.current;

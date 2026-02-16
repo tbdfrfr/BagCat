@@ -6,48 +6,6 @@ import store from './useLoaderStore';
 
 const base = import.meta.env.BASE_URL || '/';
 const withBase = (p) => `${base}${String(p || '').replace(/^\/+/, '')}`;
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const waitForActivation = (sw, timeoutMs = 10000) =>
-  new Promise((resolve) => {
-    if (!sw || sw.state === 'activated') {
-      resolve();
-      return;
-    }
-
-    const onStateChange = () => {
-      if (sw.state === 'activated' || sw.state === 'redundant') {
-        clearTimeout(timer);
-        sw.removeEventListener('statechange', onStateChange);
-        resolve();
-      }
-    };
-
-    const timer = setTimeout(() => {
-      sw.removeEventListener('statechange', onStateChange);
-      resolve();
-    }, timeoutMs);
-
-    sw.addEventListener('statechange', onStateChange);
-  });
-
-const ensureScopeActive = async (scopePath) => {
-  const reg = await navigator.serviceWorker.getRegistration(scopePath);
-  if (!reg) return false;
-  if (reg.active) return true;
-
-  if (reg.installing) await waitForActivation(reg.installing);
-  if (reg.waiting) await waitForActivation(reg.waiting);
-  return Boolean(reg.active);
-};
-
-const waitForScopeActive = async (scopePath, attempts = 30, delayMs = 120) => {
-  for (let i = 0; i < attempts; i += 1) {
-    if (await ensureScopeActive(scopePath)) return true;
-    await sleep(delayMs);
-  }
-  return false;
-};
 
 export default function useReg() {
   const { options } = useOptions();
@@ -57,82 +15,60 @@ export default function useReg() {
     { path: withBase('s_sw.js'), scope: withBase('scramjet/') },
   ];
   const setWispStatus = store((s) => s.setWispStatus);
-  const setProxyReady = store((s) => s.setProxyReady);
 
   useEffect(() => {
-    let disposed = false;
-
     const init = async () => {
-      setProxyReady(false);
-
-      try {
-        if (!window.scr) {
-          const script = document.createElement('script');
-          script.src = withBase('scram/scramjet.all.js');
-          await new Promise((resolve, reject) => {
-            script.onload = resolve;
-            script.onerror = reject;
-            document.head.appendChild(script);
-          });
-        }
-
-        const { ScramjetController } = $scramjetLoadController();
-
-        window.scr = new ScramjetController({
-          files: {
-            wasm: withBase('scram/scramjet.wasm.wasm'),
-            all: withBase('scram/scramjet.all.js'),
-            sync: withBase('scram/scramjet.sync.js'),
-          },
-          flags: { rewriterLogs: false, scramitize: false, cleanErrors: true, sourcemaps: true },
+      if (!window.scr) {
+        const script = document.createElement('script');
+        script.src = withBase('scram/scramjet.all.js');
+        await new Promise((resolve, reject) => {
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
         });
+      }
 
-        window.scr.init();
+      const { ScramjetController } = $scramjetLoadController();
 
-        for (const sw of sws) {
-          try {
-            await navigator.serviceWorker.register(
-              sw.path,
-              sw.scope ? { scope: sw.scope } : undefined,
-            );
-          } catch (err) {
-            console.warn(`SW reg err (${sw.path}):`, err);
-          }
-        }
+      window.scr = new ScramjetController({
+        files: {
+          wasm: withBase('scram/scramjet.wasm.wasm'),
+          all: withBase('scram/scramjet.all.js'),
+          sync: withBase('scram/scramjet.sync.js'),
+        },
+        flags: { rewriterLogs: false, scramitize: false, cleanErrors: true, sourcemaps: true },
+      });
 
-        await waitForScopeActive(withBase('uv/'));
-        await waitForScopeActive(withBase('scramjet/'));
+      window.scr.init();
 
-        const connection = new BareMuxConnection(withBase('baremux/worker.js'));
-        typeof isStaticBuild !== 'undefined' && isStaticBuild && setWispStatus('init');
-        let socket = typeof isStaticBuild !== 'undefined' && isStaticBuild ? await returnWServer() : null;
-        typeof isStaticBuild !== 'undefined' && isStaticBuild && (!socket ? setWispStatus(false) : setWispStatus(true));
-
-        await connection.setTransport(withBase('libcurl/index.mjs'), [
-          {
-            wisp:
-              options.wServer != null && options.wServer !== ''
-                ? options.wServer
-                : typeof isStaticBuild !== 'undefined' && isStaticBuild
-                  ? socket
-                  : ws,
-          },
-        ]);
-
-        if (!disposed) {
-          setProxyReady(true);
-        }
-      } catch (err) {
-        console.error('Proxy initialization failed:', err);
-        if (!disposed) {
-          setProxyReady(true);
+      for (const sw of sws) {
+        try {
+          await navigator.serviceWorker.register(
+            sw.path,
+            sw.scope ? { scope: sw.scope } : undefined,
+          );
+        } catch (err) {
+          console.warn(`SW reg err (${sw.path}):`, err);
         }
       }
+
+      const connection = new BareMuxConnection(withBase('baremux/worker.js'));
+      typeof isStaticBuild !== 'undefined' && isStaticBuild && setWispStatus('init');
+      let socket = typeof isStaticBuild !== 'undefined' && isStaticBuild ? await returnWServer() : null;
+      typeof isStaticBuild !== 'undefined' && isStaticBuild && (!socket ? setWispStatus(false) : setWispStatus(true));
+
+      await connection.setTransport(withBase('libcurl/index.mjs'), [
+        {
+          wisp:
+            options.wServer != null && options.wServer !== ''
+              ? options.wServer
+              : typeof isStaticBuild !== 'undefined' && isStaticBuild
+                ? socket
+                : ws,
+        },
+      ]);
     };
 
     init();
-    return () => {
-      disposed = true;
-    };
-  }, [options.wServer, setProxyReady, setWispStatus]);
+  }, [options.wServer]);
 }
