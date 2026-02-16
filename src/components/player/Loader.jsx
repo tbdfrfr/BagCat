@@ -2,38 +2,41 @@ import { useRef, useState, useCallback } from 'react';
 import Search from '/src/pages/Search';
 import { Maximize2, SquareArrowOutUpRight, ZoomIn, ZoomOut, Cloud, HardDrive } from 'lucide-react';
 import { useLocalGmLoader } from '/src/utils/hooks/player/useLocalGmLoader';
-import { useNavigate } from 'react-router-dom';
 import Control from './Controls';
 import InfoCard from './InfoCard';
 import clsx from 'clsx';
 import Tooltip from '@mui/material/Tooltip';
-import loaderStore from '/src/utils/hooks/loader/useLoaderStore';
 
 const Loader = ({ app }) => {
-  const nav = useNavigate();
   const gmRef = useRef(null);
   const [zoom, setZoom] = useState(1);
+  const [remoteFrame, setRemoteFrame] = useState(null);
   const { gmUrl, loading, downloading } = useLocalGmLoader(app);
   const isLocal = app?.local;
-  const activeFrameRef = loaderStore((state) => state.activeFrameRef);
 
   const fs = useCallback(() => {
     if (gmRef.current) {
       gmRef.current?.requestFullscreen?.();
-    } else if (activeFrameRef?.current) {
+    } else if (remoteFrame) {
       //browser restricts fullscreen w/o some sort of user interaction
       //using boolean to decide fs wont work so we directly use frame reference
-      activeFrameRef.current?.requestFullscreen?.();
+      remoteFrame?.requestFullscreen?.();
     }
-  }, [activeFrameRef]);
+  }, [remoteFrame]);
+
+  const normalizeExternalUrl = useCallback((value) => {
+    const raw = Array.isArray(value) ? value[0] : value;
+    if (!raw || typeof raw !== 'string') return null;
+    const trimmed = raw.trim();
+    if (!trimmed) return null;
+    return /^(https?:)?\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  }, []);
 
   const external = useCallback(() => {
-    nav('/search', {
-      state: {
-        url: app?.url,
-      },
-    });
-  }, [app?.url, nav]);
+    const href = normalizeExternalUrl(app?.url);
+    if (!href) return;
+    window.open(href, '_blank', 'noopener,noreferrer');
+  }, [app?.url, normalizeExternalUrl]);
 
   const handleZoom = useCallback((direction) => {
     setZoom((prev) => {
@@ -81,7 +84,7 @@ const Loader = ({ app }) => {
           sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-pointer-lock"
         />
       ) : (
-        <Search url={app?.url} ui={false} zoom={zoom} />
+        <Search url={app?.url} zoom={zoom} onRemoteFrameChange={setRemoteFrame} />
       )}
 
       <div className="p-2.5 flex gap-2 border-t">
