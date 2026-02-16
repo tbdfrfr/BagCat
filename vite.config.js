@@ -72,16 +72,12 @@ const obf = {
 
 export default defineConfig(({ command }) => {
   const environment = isStatic ? 'static' : command === 'serve' ? 'dev' : 'stable';
-  const shouldObfuscate =
-    command === 'build' &&
-    process.env.OBFUSCATE !== 'false' &&
-    (!isStatic || process.env.OBFUSCATE_STATIC === 'true');
 
   return {
     base,
     plugins: [
       react(),
-      shouldObfuscate && vitePluginBundleObfuscator(obf),
+      command === 'build' && vitePluginBundleObfuscator(obf),
       viteStaticCopy({
         targets: [
           { src: [normalizePath(resolve(libcurlPath, '*'))], dest: 'libcurl' },
