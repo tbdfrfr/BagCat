@@ -1,10 +1,11 @@
 import Nav from '../layouts/Nav';
 import { useState, useMemo, useEffect, useCallback, memo, useRef, lazy, Suspense } from 'react';
-import { Search, LayoutGrid, ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import { Search, LayoutGrid, ChevronLeft, ChevronRight, Play, Settings2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useOptions } from '/src/utils/optionsContext';
 import styles from '../styles/apps.module.css';
 import clsx from 'clsx';
+import BackgroundSettings from '../components/BackgroundSettings';
 
 const Pagination = lazy(() => import('@mui/material/Pagination'));
 
@@ -144,6 +145,7 @@ const Games = memo(() => {
   const [dlCount, setDlCount] = useState(0);
   const [showDl, setShowDl] = useState(false);
   const [dlGames, setDlGames] = useState([]);
+  const [showBgSettings, setShowBgSettings] = useState(false);
 
   useEffect(() => {
     import('../utils/localGmLoader')
@@ -257,22 +259,37 @@ const Games = memo(() => {
             ← Back to all
           </button>
         )}
-        <div
-          className={clsx(
-            'relative flex items-center gap-2.5 rounded-[10px] px-3 w-[640px] h-12',
-            'bg-[rgba(20,29,43,0.52)] backdrop-blur-md border border-white/20',
-          )}
-        >
-          <Search className="w-4 h-4 shrink-0" />
-          <input
-            type="text"
-            placeholder="Search games"
-            value={q}
-            onChange={handleSearch}
-            className="flex-1 bg-transparent outline-none text-sm"
-          />
+        <div className="flex items-center gap-2">
+          <div
+            className={clsx(
+              'relative flex items-center gap-2.5 rounded-[10px] px-3 w-[640px] max-w-[calc(100vw-6.5rem)] h-12',
+              'bg-[rgba(20,29,43,0.52)] backdrop-blur-md border border-white/20',
+            )}
+          >
+            <Search className="w-4 h-4 shrink-0" />
+            <input
+              type="text"
+              placeholder="Search games"
+              value={q}
+              onChange={handleSearch}
+              className="flex-1 bg-transparent outline-none text-sm"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowBgSettings(true)}
+            className={clsx(
+              'h-12 w-12 rounded-[10px] flex items-center justify-center',
+              'bg-[rgba(20,29,43,0.52)] backdrop-blur-md border border-white/20',
+              'hover:bg-[rgba(40,52,72,0.7)] transition-colors',
+            )}
+            aria-label="Open background settings"
+          >
+            <Settings2 size={18} />
+          </button>
         </div>
       </div>
+      <BackgroundSettings isOpen={showBgSettings} onClose={() => setShowBgSettings(false)} />
 
       {showDl && (
         <div className="text-center text-xs opacity-60 pb-2">

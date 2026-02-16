@@ -3,7 +3,7 @@ import ReactGA from 'react-ga4';
 import lazyLoad from './lazyWrapper';
 import { useEffect, useMemo, memo } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { OptionsProvider } from './utils/optionsContext';
+import { OptionsProvider, useOptions } from './utils/optionsContext';
 import { initPreload } from './utils/preload';
 import FluidBackground from './components/FluidBackground';
 import './index.css';
@@ -24,8 +24,14 @@ function useTracking() {
   }, [location]);
 }
 
+const readSolidBackground = (value) =>
+  typeof value === 'string' && /^#[0-9a-fA-F]{6}$/.test(value.trim()) ? value.trim() : '#000000';
+
 const MainApp = memo(() => {
   useTracking();
+  const { options } = useOptions();
+  const fluidEnabled = options.fluidBackgroundEnabled !== false;
+  const appBackground = fluidEnabled ? '#000000' : readSolidBackground(options.solidBackgroundColor);
 
   const pages = useMemo(
     () => [
@@ -43,7 +49,7 @@ const MainApp = memo(() => {
       <div className="relative z-10">
         <Routing pages={pages} />
       </div>
-      <style>{`html, body, #root { background-color: #000 !important; background-image: none !important; min-height: 100%; } body { color: #e5e7eb; }`}</style>
+      <style>{`html, body, #root { background-color: ${appBackground} !important; background-image: none !important; min-height: 100%; } body { color: #e5e7eb; }`}</style>
     </>
   );
 });

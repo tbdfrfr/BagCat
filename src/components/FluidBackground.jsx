@@ -1,4 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import { useOptions } from '/src/utils/optionsContext';
+import fluidThemes from '../../fluid-themes.json';
 
 const vertexShaderSource = `#version 300 es
 precision highp float;
@@ -101,10 +103,49 @@ function createProgram(gl, vsSource, fsSource) {
   return program;
 }
 
+const themes = Array.isArray(fluidThemes) ? fluidThemes : [];
+const FALLBACK_THEME = {
+  color1: '#5c82ca',
+  color2: '#009cff',
+  color3: '#000000',
+};
+
+function hexToNormalizedRgb(hex, fallbackHex) {
+  const normalized = typeof hex === 'string' && /^#[0-9a-fA-F]{6}$/.test(hex.trim()) ? hex.trim() : fallbackHex;
+  return [
+    parseInt(normalized.slice(1, 3), 16) / 255,
+    parseInt(normalized.slice(3, 5), 16) / 255,
+    parseInt(normalized.slice(5, 7), 16) / 255,
+  ];
+}
+
 const FluidBackground = () => {
   const canvasRef = useRef(null);
+  const { options } = useOptions();
+
+  const fluidEnabled = options.fluidBackgroundEnabled !== false;
+  const selectedTheme = useMemo(() => {
+    const fallback = themes[0] || FALLBACK_THEME;
+    const requested = options.fluidThemeName;
+    return themes.find((theme) => theme.name === requested) || fallback;
+  }, [options.fluidThemeName]);
+
+  const color1 = useMemo(
+    () => hexToNormalizedRgb(selectedTheme.color1, FALLBACK_THEME.color1),
+    [selectedTheme.color1],
+  );
+  const color2 = useMemo(
+    () => hexToNormalizedRgb(selectedTheme.color2, FALLBACK_THEME.color2),
+    [selectedTheme.color2],
+  );
+  const color3 = useMemo(
+    () => hexToNormalizedRgb(selectedTheme.color3, FALLBACK_THEME.color3),
+    [selectedTheme.color3],
+  );
 
   useEffect(() => {
+    if (!fluidEnabled) return undefined;
+
     const canvas = canvasRef.current;
     if (!canvas) return undefined;
 
@@ -169,9 +210,9 @@ const FluidBackground = () => {
       gl.useProgram(program);
       gl.uniform1f(iTimeLoc, simTime);
       gl.uniform3f(iResolutionLoc, canvas.width, canvas.height, 1.0);
-      gl.uniform4f(color1Loc, 0.36, 0.51, 0.79, 1.0);
-      gl.uniform4f(color2Loc, 0.0, 0.61, 1.0, 1.0);
-      gl.uniform4f(color3Loc, 0.0, 0.0, 0.0, 1.0);
+      gl.uniform4f(color1Loc, color1[0], color1[1], color1[2], 1.0);
+      gl.uniform4f(color2Loc, color2[0], color2[1], color2[2], 1.0);
+      gl.uniform4f(color3Loc, color3[0], color3[1], color3[2], 1.0);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
 
@@ -201,7 +242,9 @@ const FluidBackground = () => {
       window.removeEventListener('scroll', onScroll);
       gl.deleteProgram(program);
     };
-  }, []);
+  }, [fluidEnabled, color1, color2, color3]);
+
+  if (!fluidEnabled) return null;
 
   return (
     <canvas
