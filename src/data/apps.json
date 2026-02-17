@@ -127,7 +127,7 @@
       },
       {
         "appName": "Skribbl",
-        "icon": "/assets/img/skribbl.jfif",
+        "icon": "/assets/img/skribbl.png",
         "url": "https://skribbl.io/",
         "disabled": false,
         "local": false

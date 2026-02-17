@@ -1,15 +1,6 @@
-const base = import.meta.env.BASE_URL || '/';
-const withBase = (p) => `${base}${String(p || '').replace(/^\/+/, '')}`;
+import { withBase } from './assetUrl';
 
-// In static (GitHub Pages) builds we don't have a backend to proxy `/assets/*`,
-// so point these icons directly at the CDN used elsewhere in the static build.
-const assetCdn = 'https://cdn.jsdelivr.net/gh/DogeNetwork/v5-assets/img/';
-const isStatic = typeof isStaticBuild !== 'undefined' && isStaticBuild;
-const assetIcon = (p) => {
-  const path = String(p || '');
-  if (isStatic) return assetCdn + path.replace(/^\/assets\/img\//, '');
-  return withBase(path);
-};
+const assetIcon = (p) => withBase(p);
 
 export const meta = [
   {

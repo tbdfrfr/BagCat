@@ -95,16 +95,6 @@ export default defineConfig(({ command }) => {
           },
         ].filter(Boolean),
       }),
-      isStatic && {
-        name: 'replace-cdn',
-        transform(code, id) {
-          if (id.endsWith('apps.json')) {
-            return code
-              .replace(/\/assets-fb\//g, 'https://cdn.jsdelivr.net/gh/DogeNetwork/v5-assets/img/server/')
-              .replace(/\/assets\/img\//g, 'https://cdn.jsdelivr.net/gh/DogeNetwork/v5-assets/img/');
-          }
-        },
-      },
       {
         name: 'server',
         apply: 'serve',
@@ -184,20 +174,6 @@ export default defineConfig(({ command }) => {
         generateScopedName: () =>
           String.fromCharCode(97 + Math.floor(Math.random() * 17)) +
           Math.random().toString(36).substring(2, 8),
-      },
-    },
-    server: {
-      proxy: {
-        '/assets/img': {
-          target: 'https://dogeub-assets.pages.dev',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/assets\/img/, '/img'),
-        },
-        '/assets-fb': {
-          target: 'https://dogeub-assets.pages.dev',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/assets-fb/, '/img/server'),
-        },
       },
     },
     define: {

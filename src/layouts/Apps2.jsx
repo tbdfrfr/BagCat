@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect, useCallback, memo, useRef, lazy, Suspense
 import { Search, LayoutGrid, ChevronLeft, ChevronRight, Settings2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useOptions } from '/src/utils/optionsContext';
+import { resolveAssetUrl } from '../utils/assetUrl';
 import styles from '../styles/apps.module.css';
 import clsx from 'clsx';
 import BackgroundSettings from '../components/BackgroundSettings';
@@ -32,7 +33,7 @@ const AppCard = memo(({ app, onClick, fallbackMap, onImgError, itemStyles, isPop
           <LayoutGrid className="w-full h-full" />
         ) : (
           <img
-            src={app.icon}
+            src={resolveAssetUrl(app.icon)}
             draggable="false"
             loading="lazy"
             className="w-full h-full object-cover"
