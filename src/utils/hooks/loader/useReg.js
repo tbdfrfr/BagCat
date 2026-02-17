@@ -5,6 +5,25 @@ import { fetchW as returnWServer } from './findWisp';
 
 const base = import.meta.env.BASE_URL || '/';
 const withBase = (p) => `${base}${String(p || '').replace(/^\/+/, '')}`;
+const normalizeWispEndpoint = (value) => {
+  if (typeof value !== 'string') return '';
+  let out = value.trim();
+  if (!out) return '';
+
+  if (/^https?:\/\//i.test(out)) {
+    out = out.replace(/^http/i, 'ws');
+  } else if (!/^wss?:\/\//i.test(out)) {
+    out = `wss://${out}`;
+  }
+
+  if (!/\/wisp\/?$/i.test(out)) {
+    out = `${out.replace(/\/+$/, '')}/wisp/`;
+  } else if (!out.endsWith('/')) {
+    out += '/';
+  }
+
+  return out;
+};
 const swTargets = [
   { path: withBase('uv/sw.js') },
   { path: withBase('s_sw.js'), scope: withBase('scramjet/') },
@@ -122,15 +141,22 @@ export default function useReg() {
       await ensureServiceWorkers();
 
       const connection = new BareMuxConnection(withBase('baremux/worker.js'));
-      const socket = staticMode ? await returnWServer() : null;
+      const envWisp = normalizeWispEndpoint(import.meta.env.VITE_WISP_URL);
+      const customWisp = normalizeWispEndpoint(options.wServer) || envWisp;
+      const discoveredWisp = staticMode && !customWisp ? await returnWServer() : '';
+      const wispEndpoint = customWisp || (staticMode ? discoveredWisp : ws);
 
       if (mounted && staticMode) {
-        setWispStatus(socket ? true : false);
+        setWispStatus(Boolean(wispEndpoint));
+      }
+
+      if (!wispEndpoint) {
+        throw new Error('No working Wisp endpoint available');
       }
 
       await connection.setTransport(withBase('libcurl/index.mjs'), [
         {
-          wisp: options.wServer?.trim() ? options.wServer : staticMode ? socket : ws,
+          wisp: wispEndpoint,
         },
       ]);
 

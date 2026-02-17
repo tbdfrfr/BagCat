@@ -8,7 +8,7 @@ export default function StaticError() {
       <div className="text-center mt-1">
         <p>No working Wisp server was found to route your request.</p>
         <p className="text-xs">
-          Please try again later or consider setting your own Wisp server in Settings &gt; Advanced.
+          Try again later, or configure a custom Wisp endpoint (e.g. <span className="font-mono">wss://your-domain/wisp/</span>).
         </p>
       </div>
     </div>

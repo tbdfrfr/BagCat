@@ -33,6 +33,7 @@ jobs:
           STATIC: "true"
           BARE: "false"
           BASE_PATH: "/${{ github.event.repository.name }}/"
+          VITE_WISP_URL: "${{ vars.VITE_WISP_URL }}"
         run: npm run build
 
       - name: Pages config
@@ -58,4 +59,3 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
-

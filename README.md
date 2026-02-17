@@ -33,4 +33,43 @@ BagCat Is an online proxy service that gets around those <i>Pesky<i> web filters
 <br>
 Join our discord to request games/features, report bugs, and join the community! [Discord link]
 
+## Hosting With GitHub Pages + Wisp Backend
 
+If you host the frontend on GitHub Pages, run a separate Wisp backend on a backend-capable host.
+
+### 1) Deploy the Wisp backend
+
+This repo now includes a minimal backend entry:
+
+- `wisp-backend.js`
+- health check: `GET /healthz`
+- websocket endpoint: `wss://<your-domain>/wisp/`
+
+Start command:
+
+```bash
+npm ci
+npm run start:wisp
+```
+
+Your host must support WebSocket upgrades and HTTPS.
+
+### 2) Point the frontend to your Wisp backend
+
+Set this at build-time for static deployments:
+
+```bash
+VITE_WISP_URL=wss://<your-domain>/wisp/
+```
+
+If you use this repo's GitHub Pages workflow, set a repository variable named `VITE_WISP_URL` with that value, then build/deploy as usual.
+
+### 3) Optional runtime override (without rebuilding)
+
+In browser devtools:
+
+```js
+const current = JSON.parse(localStorage.getItem('options') || '{}');
+localStorage.setItem('options', JSON.stringify({ ...current, wServer: 'wss://<your-domain>/wisp/' }));
+location.reload();
+```
