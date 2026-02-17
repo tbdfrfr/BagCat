@@ -12,21 +12,21 @@
     {
       "appName": "Twitch",
       "desc": "Watch and stream games live on Twitch.tv.",
-      "icon": "/assets/img/twitch.webp",
+      "icon": "https://img.freepik.com/premium-vector/twitch-logo_578229-259.jpg",
       "url": "https://twitch.tv",
       "disabled": false
     },
     {
       "appName": "YouTube",
       "desc": "Watch, create, and share videos worldwide.",
-      "icon": "/assets/img/youtube.webp",
+      "icon": "https://static.vecteezy.com/system/resources/previews/011/998/173/non_2x/youtube-icon-free-vector.jpg",
       "url": "https://youtube.com",
       "disabled": false
     },
     {
       "appName": "Symbolab",
       "desc": "Step-by-step math solver powered by Symbolab.",
-      "icon": "/assets/img/symb.webp",
+      "icon": "https://64.media.tumblr.com/58c6456bc6e59a185e50a44e713fcb14/tumblr_nyshf9u2M61qhkxf1_og_1280.png",
       "url": "https://symbolab.com",
       "disabled": false
     },
@@ -40,7 +40,7 @@
     {
       "appName": "Discord",
       "desc": "Chat, voice, and communities all in one place.",
-      "icon": "/assets/img/discord.webp",
+      "icon": "https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHHFT949fUipzkiFOBH3fAiZZUCdYojwUyX2aTonS1aIwMrx6NUIsHfUHSLzjGJFxxsG72wAo9EWJR4yQWyJJaDaK1XdUso6cUMpI9hAdPUU_FNs11cY1X284vsHrnWtRw7oqRpN1m9YAg21d_aNKnIo-&format=source",
       "url": "https://discord.com/app",
       "disabled": false
     },
@@ -52,17 +52,10 @@
       "disabled": false
     },
     {
-      "appName": "X (Twitter)",
-      "desc": "Real-time news and social conversations.",
-      "icon": "/assets/img/twitter-x.webp",
-      "url": "https://x.com",
-      "disabled": false
-    },
-    {
-      "appName": "9anime",
-      "desc": "Watch unlimited anime episodes in HD for free.",
-      "icon": "/assets/img/9ani.webp",
-      "url": "https://9animetv.to",
+      "appName": "Google",
+      "desc": "Google.com helps you find anything online.",
+      "icon": "/assets/img/goog.webp",
+      "url": "https://google.com",
       "disabled": false
     }
   ],
@@ -73,14 +66,6 @@
         "desc": "All-Time favorites",
         "icon": "/assets/img/geforcenow.webp",
         "url": "https://play.geforcenow.com",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "Roblox",
-        "desc": "All-Time favorites",
-        "icon": "/assets/img/roblox.webp",
-        "url": "https://roblox.com",
         "disabled": false,
         "local": false
       },
@@ -102,70 +87,6 @@
       }
     ],
     "Games": [
-      {
-        "appName": "1v1.lol",
-        "desc": "Fun Action",
-        "icon": "/assets/img/1v1.webp",
-        "url": "https://1v1.lol",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "BuildNow.GG",
-        "desc": "Fun Action",
-        "icon": "/assets/img/buildnow.webp",
-        "url": "https://games.crazygames.com/en_US/buildnow-gg/index.html",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "Funny Shooter 2",
-        "desc": "Fun Action",
-        "icon": "/assets/img/funnyshooter2.webp",
-        "url": "https://htmlxm.github.io/h4/funny-shooter-2",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "Janissary Battles",
-        "desc": "Fun Action",
-        "icon": "https://cdn.jsdelivr.net/gh/Skoolgq/Polaris-Assets/images/janissary.png",
-        "url": "https://html5.gamedistribution.com/rvvASMiM/8b55f4f729be4e70b6155f27d2e04690/?gd_sdk_referrer_url=https://gamedistribution.com/games/janissary-battles",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "Missiles",
-        "desc": "Fun Action",
-        "icon": "https://cdn.jsdelivr.net/gh/Skoolgq/Polaris-Assets/missiles/miss.png",
-        "url": "https://raw.githack.com/Skoolgq/Polaris-Assets/main/missiles/index.html",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "Station 141",
-        "desc": "Fun Action",
-        "icon": "/assets/img/station141.webp",
-        "url": "https://assets.hbmc.net/station-141/index.html",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "Stick Merge",
-        "desc": "Fun Action",
-        "icon": "/assets-fb/stick-merge/splash.png",
-        "url": "https://assets.hbmc.net/stick-merge/index.html",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "Superhot",
-        "desc": "Fun Action",
-        "icon": "/assets-fb/superhot/hot.jpg",
-        "url": "https://assets.hbmc.net/superhot/index.html",
-        "disabled": false,
-        "local": false
-      },
       {
         "appName": "Time Shooter SWAT",
         "desc": "Fun Action",
@@ -215,106 +136,10 @@
         "local": false
       },
       {
-        "appName": "Shell Shockers",
-        "desc": "Fun Action",
-        "icon": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoOzqUkvqiUeeuoh1siVjOGxEG8tpeVjvCGQ&s",
-        "url": "https://shellshock.io/",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "Hole.io",
-        "desc": "Domination-type fun",
-        "icon": "/assets/img/hole-io.webp",
-        "url": "https://hole-io.com",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "Paper.io",
-        "desc": "Domination-type fun",
-        "icon": "/assets/img/paperio.webp",
-        "url": "https://paper-io.com",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "Slither.io",
-        "desc": "Domination-type fun",
-        "icon": "https://play-lh.googleusercontent.com/oObkhKfUXOY5yzheKe9w1Y1pXZBgdiSksMeNmT0BijoQ8J75maTCIW2TA7-6pA6EMA",
-        "url": "https://slither.io",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "Snowbattle.io",
-        "desc": "Domination-type fun",
-        "icon": "/assets-fb/snowbattle/img/logo.png",
-        "url": "https://assets.hbmc.net/snowbattle/index.html",
-        "disabled": false,
-        "local": false
-      },
-      {
         "appName": "Territorial.io",
         "desc": "Domination-type fun",
         "icon": "/assets/img/territorial.webp",
         "url": "https://territorial.io",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "Bonk.io",
-        "desc": "Sandbox/Arcade apps",
-        "icon": "https://b.thumbs.redditmedia.com/9p8-wn2_KPdgjPTaR9fx-NIVgFhvsgBL0WPdbv5GMkA.png",
-        "url": "https://bonk.io",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "Paper.io 2",
-        "desc": "Domination-type fun",
-        "icon": "/assets-fb/paperio2/logo.png",
-        "url": "https://assets.hbmc.net/paperio2/index.html",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "Surviv.io",
-        "desc": "Fun Action",
-        "icon": "/assets-fb/surviv/favicon.png",
-        "url": "https://assets.hbmc.net/surviv/index.html",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "Clash Royale",
-        "desc": "Fun Action",
-        "icon": "/assets/img/clash.webp",
-        "url": "https://www.friv.com/z/games/clashofvikings/index-x.html",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "lolbeans.io",
-        "desc": "Fun Action",
-        "icon": "/assets/img/lolbeans.webp",
-        "url": "https://lolbeans.io/",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "Stumble Guys",
-        "desc": "Fun Action",
-        "icon": "/assets/img/stumble-guys.webp",
-        "url": "https://www.stumbleguys.com/play",
-        "disabled": false,
-        "local": false
-      },
-      {
-        "appName": "Diep.io",
-        "desc": "Fun Action",
-        "icon": "/assets/img/diep.jfif",
-        "url": "https://diep.io",
         "disabled": false,
         "local": false
       },
@@ -326,11 +151,11 @@
         "disabled": false,
         "local": false
       },
-      {
-        "appName": "Paper IO",
-        "desc": "Sandbox/Arcade apps",
-        "icon": "/assets/img/paper-io.webp",
-        "url": "https://paperio-2.github.io/a9/paper-io-2/",
+            {
+        "appName": "Missiles",
+        "desc": "Fun Action",
+        "icon": "https://cdn.jsdelivr.net/gh/Skoolgq/Polaris-Assets/missiles/miss.png",
+        "url": "https://raw.githack.com/Skoolgq/Polaris-Assets/main/missiles/index.html",
         "disabled": false,
         "local": false
       }

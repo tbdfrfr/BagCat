@@ -6,6 +6,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { OptionsProvider, useOptions } from './utils/optionsContext';
 import { initPreload } from './utils/preload';
 import FluidBackground from './components/FluidBackground';
+import AnnouncementPopup from './components/AnnouncementPopup';
 import './index.css';
 import 'nprogress/nprogress.css';
 
@@ -46,6 +47,7 @@ const MainApp = memo(() => {
   return (
     <>
       <FluidBackground />
+      <AnnouncementPopup />
       <div className="relative z-10">
         <Routing pages={pages} />
       </div>

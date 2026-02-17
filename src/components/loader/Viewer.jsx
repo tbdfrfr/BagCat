@@ -38,8 +38,9 @@ export default function Viewer({ src, mode, zoom = 1, wispStatus, onFrameRefChan
       height: `${100 / scale}%`,
       transform: scale === 1 ? undefined : `scale(${scale})`,
       transformOrigin: 'top left',
+      visibility: loading ? 'hidden' : 'visible',
     }),
-    [scale],
+    [scale, loading],
   );
 
   useEffect(() => {
@@ -78,23 +79,25 @@ export default function Viewer({ src, mode, zoom = 1, wispStatus, onFrameRefChan
   }, [src, mode, onFrameIssue, markFrameIssue]);
 
   const handleLoad = useCallback(() => {
-    setLoading(false);
-    if (!isProxyMode(mode) || !onFrameIssue || issueReportedRef.current) return;
+    if (isProxyMode(mode) && onFrameIssue && !issueReportedRef.current) {
+      try {
+        const doc = iframeRef.current?.contentDocument;
+        const pathName = iframeRef.current?.contentWindow?.location?.pathname;
 
-    try {
-      const doc = iframeRef.current?.contentDocument;
-      const pathName = iframeRef.current?.contentWindow?.location?.pathname;
-
-      if (
-        doc?.getElementById('errorTrace-wrapper') ||
-        doc?.getElementById('fetchedURL') ||
-        looksLikeBagcatHome(doc, pathName)
-      ) {
-        markFrameIssue('proxy');
+        if (
+          doc?.getElementById('errorTrace-wrapper') ||
+          doc?.getElementById('fetchedURL') ||
+          looksLikeBagcatHome(doc, pathName)
+        ) {
+          markFrameIssue('proxy');
+          return;
+        }
+      } catch {
+        // Cross-origin frame reads can fail in direct mode; ignore.
       }
-    } catch {
-      // Cross-origin frame reads can fail in direct mode; ignore.
     }
+
+    setLoading(false);
   }, [mode, onFrameIssue, markFrameIssue]);
 
   const handleError = useCallback(() => {

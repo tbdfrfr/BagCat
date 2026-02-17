@@ -1,10 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { useOptions } from '/src/utils/optionsContext';
+import versionData from '/src/data/version.json';
 import nav from '../styles/nav.module.css';
 import clsx from 'clsx';
 import { memo, useMemo, useCallback } from 'react';
 
-const version = 'v1.1';
+const rawVersion = typeof versionData?.value === 'string' ? versionData.value.trim() : '1.0';
+const normalizedVersion = rawVersion.replace(/^v/i, '') || '1.0';
+const version = `v${normalizedVersion}`;
 const headerImageSrc = `${import.meta.env.BASE_URL}header-image.png`;
 
 const Nav = memo(() => {
