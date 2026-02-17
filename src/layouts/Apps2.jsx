@@ -1,6 +1,6 @@
 import Nav from '../layouts/Nav';
 import { useState, useMemo, useEffect, useCallback, memo, useRef, lazy, Suspense } from 'react';
-import { Search, LayoutGrid, ChevronLeft, ChevronRight, Play, Settings2 } from 'lucide-react';
+import { Search, LayoutGrid, ChevronLeft, ChevronRight, Settings2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useOptions } from '/src/utils/optionsContext';
 import styles from '../styles/apps.module.css';
@@ -24,7 +24,7 @@ const AppCard = memo(({ app, onClick, fallbackMap, onImgError, itemStyles, isPop
       )}
       onClick={!app.disabled ? () => onClick(app) : undefined}
     >
-      <div className="w-28 h-28 rounded-[14px] mb-4 overflow-hidden relative">
+      <div className="w-[8.5rem] h-[8.5rem] rounded-[14px] mb-4 overflow-hidden relative">
         {!loaded && !fallbackMap[app.appName] && (
           <div className="absolute inset-0 bg-gray-700 animate-pulse" />
         )}
@@ -41,11 +41,9 @@ const AppCard = memo(({ app, onClick, fallbackMap, onImgError, itemStyles, isPop
           />
         )}
       </div>
-      <p className="text-m font-semibold mb-3 flex-grow line-clamp-2">{app.appName.split('').join('\u200B')}</p>
-      <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#ffffff15] hover:bg-[#ffffff25] transition-colors text-sm font-medium mt-auto self-start">
-        <Play size={16} fill="currentColor" />
-        Play
-      </button>
+      <p className="text-[1.06rem] leading-snug font-semibold mb-3 flex-grow line-clamp-2">
+        {app.appName.split('').join('\u200B')}
+      </p>
     </div>
   );
 });
