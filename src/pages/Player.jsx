@@ -14,7 +14,7 @@ const Player = () => {
   return (
     <>
       <Nav />
-      <div className="w-[80%] mx-auto flex flex-col gap-4 mt-4 mb-8">
+      <div className="w-[min(1320px,95vw)] mx-auto flex flex-col gap-4 mt-4 mb-8">
         <Loader app={app} />
       </div>
     </>

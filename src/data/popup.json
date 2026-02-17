@@ -1,6 +1,6 @@
 {
   "enabled": true,
-  "title": "Welcome to Bagcat",
+  "title": "Welcome to Bagcat!",
   "message": "Welcome to BagCat! We are still in very very early beta, so expect some bugs!",
   "details": [
     "This popup appears once per version.",

@@ -1,10 +1,16 @@
 const InfoCard = ({ app }) => {
+  const appName = app?.appName || 'Unknown App';
+
   return (
-    <div className="flex h-13 w-full p-2.5 py-7 items-center rounded-xl">
-      <img src={app?.icon} className="w-12 h-12 rounded-md object-cover" />
-      <div className="ml-4 flex flex-col gap-1">
-        <p className="font-bold">{app?.appName || 'Unknown App'}</p>
-        <span className="text-ellipsis">{app?.desc || 'No description available.'}</span>
+    <div className="flex min-w-0 items-center gap-3">
+      <img
+        src={app?.icon}
+        alt={appName}
+        draggable="false"
+        className="h-10 w-10 rounded-lg object-cover border border-white/20 bg-[#0e1726]"
+      />
+      <div className="min-w-0">
+        <p className="font-semibold leading-tight truncate">{appName}</p>
       </div>
     </div>
   );

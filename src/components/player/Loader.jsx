@@ -46,66 +46,61 @@ const Loader = ({ app }) => {
     });
   }, []);
 
+  const zoomLabel = `${Math.round(zoom * 100)}%`;
+
   return (
     <div
       className={clsx(
-        'flex flex-col h-[calc(100vh-38px)] w-full rounded-xl',
-        'bg-[#141d2b] border border-[#1f324e]',
+        'flex flex-col w-full overflow-hidden rounded-2xl',
+        'bg-[rgba(12,20,34,0.64)] backdrop-blur-xl border border-white/20',
+        'shadow-[0_24px_70px_rgba(0,0,0,0.35)]',
+        'h-[calc(100vh-128px)] min-h-[460px]',
       )}
     >
-      <div className="p-2 pl-1 border-b flex gap-2 items-center">
+      <div className="px-3 py-2 border-b border-white/10 flex items-center gap-3">
         <InfoCard app={app} />
-        <Tooltip
-          title={isLocal ? 'Downloaded to device (local)' : 'Fetched from web'}
-          arrow
-          placement="top"
-        >
-          <div className="flex items-center ml-auto mr-5">
-            {isLocal ? (
-              <HardDrive size={18} className="opacity-80" />
-            ) : (
-              <Cloud size={18} className="opacity-80" />
-            )}
-          </div>
-        </Tooltip>
-      </div>
-
-      {loading ? (
-        <div className="w-full flex-grow flex items-center justify-center">
-          {downloading ? 'Downloading...' : 'Loading...'}
-        </div>
-      ) : isLocal ? (
-        <iframe
-          key={gmUrl}
-          src={gmUrl}
-          ref={gmRef}
-          onContextMenu={(e) => e.preventDefault()}
-          className="w-full flex-grow"
-          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-pointer-lock"
-        />
-      ) : (
-        <Search url={app?.url} zoom={zoom} onRemoteFrameChange={setRemoteFrame} />
-      )}
-
-      <div className="p-2.5 flex gap-2 border-t">
-        {isLocal ? (
-          <Tooltip title="Local games can't open in browser" arrow placement="top">
-            <div className="cursor-not-allowed">
-              <Control
-                icon={SquareArrowOutUpRight}
-                fn={null}
-                className="cursor-not-allowed opacity-50 pointer-events-none"
-              />
+        <div className="ml-auto flex items-center gap-2">
+          <Tooltip title={isLocal ? 'Downloaded to device (local)' : 'Fetched from web'} arrow placement="top">
+            <div className="h-9 px-2.5 rounded-lg bg-white/5 border border-white/15 flex items-center gap-2 text-xs text-white/75">
+              {isLocal ? <HardDrive size={14} className="opacity-80" /> : <Cloud size={14} className="opacity-80" />}
+              <span>{isLocal ? 'Local' : 'Web'}</span>
             </div>
           </Tooltip>
-        ) : (
-          <Control icon={SquareArrowOutUpRight} fn={external} />
-        )}
 
-        <div className="ml-auto flex gap-2">
-          <Control icon={ZoomIn} fn={() => handleZoom('in')} />
-          <Control icon={ZoomOut} fn={() => handleZoom('out')} />
-          <Control icon={Maximize2} fn={fs} />
+          {!isLocal && (
+            <Control icon={SquareArrowOutUpRight} fn={external} title="Open in new tab" />
+          )}
+          {isLocal && (
+            <Control icon={SquareArrowOutUpRight} fn={null} title="Local games can't open in browser" disabled />
+          )}
+
+          <Control icon={ZoomOut} fn={() => handleZoom('out')} title="Zoom out" />
+          <div className="min-w-12 h-9 rounded-lg bg-white/5 border border-white/15 grid place-items-center text-xs text-white/70">
+            {zoomLabel}
+          </div>
+          <Control icon={ZoomIn} fn={() => handleZoom('in')} title="Zoom in" />
+          <Control icon={Maximize2} fn={fs} title="Fullscreen" />
+        </div>
+      </div>
+
+      <div className="flex-1 p-3 sm:p-4">
+        <div className="w-full h-full rounded-xl overflow-hidden border border-white/12 bg-[#070e15]/80">
+          {loading ? (
+            <div className="w-full h-full flex items-center justify-center text-sm text-white/70">
+              {downloading ? 'Downloading game files...' : 'Loading game...'}
+            </div>
+          ) : isLocal ? (
+            <iframe
+              key={gmUrl}
+              src={gmUrl}
+              ref={gmRef}
+              onContextMenu={(e) => e.preventDefault()}
+              className="w-full h-full"
+              sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-pointer-lock"
+            />
+          ) : (
+            <Search url={app?.url} zoom={zoom} onRemoteFrameChange={setRemoteFrame} />
+          )}
         </div>
       </div>
     </div>

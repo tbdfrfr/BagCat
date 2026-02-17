@@ -1,19 +1,24 @@
 import clsx from 'clsx';
 
-const Controls = ({ icon: Icon, fn, size = 18, className, children }) => {
+const Controls = ({ icon: Icon, fn, size = 16, className, children, title, disabled = false }) => {
   return (
-    <div
+    <button
+      type="button"
       onClick={fn}
+      title={title}
+      aria-label={title || 'control'}
+      disabled={disabled || typeof fn !== 'function'}
       className={clsx(
-        'h-7 flex justify-center items-center rounded-md cursor-pointer hover:opacity-60',
-        children ? 'px-2 gap-2 min-w-7' : 'w-7',
-        'bg-[#1b273a] border border-[#1f324e]',
+        'h-9 flex justify-center items-center rounded-lg transition-colors',
+        children ? 'px-3 gap-1.5 min-w-9' : 'w-9',
+        'bg-white/5 border border-white/15 hover:bg-white/12',
+        (disabled || typeof fn !== 'function') && 'opacity-40 cursor-not-allowed hover:bg-white/5',
         className,
       )}
     >
       <Icon size={size} className="shrink-0" />
       {children}
-    </div>
+    </button>
   );
 };
 export default Controls;
