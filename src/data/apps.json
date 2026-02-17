@@ -84,6 +84,13 @@
         "local": false
       },
       {
+        "appName": "Kour.io",
+        "icon": "https://play-lh.googleusercontent.com/-7D4gqeabC8nF4bSxsrTf3IgnbVP7fL-Bq3jLo6507VcwNe28WSR8ufykib-QZULrq8=w240-h480-rw",
+        "url": "https://kour.io",
+        "disabled": false,
+        "local": false
+      },
+      {
         "appName": "Dragon vs Bricks",
         "icon": "/assets-fb/dragon-vs-bricks/icon.jpg",
         "url": "https://assets.hbmc.net/dragon-vs-bricks/index.html",
