@@ -104,6 +104,7 @@ const proxy = (url, type = "application/javascript") => async (req, reply) => {
 };
 
 app.get("/js/script.js", proxy(() => "https://byod.privatedns.org/js/script.js"));
+app.get("/healthz", async (_req, reply) => reply.code(200).type("text/plain").send("ok"));
 app.get("/ds", (req, res) => res.redirect("https://discord.com/invite/9qSBZpmPNV"));
 app.get("/return", async (req, reply) =>
   req.query?.q

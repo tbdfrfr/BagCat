@@ -33,6 +33,25 @@ BagCat Is an online proxy service that gets around those <i>Pesky<i> web filters
 <br>
 Join our discord to request games/features, report bugs, and join the community! [Discord link]
 
+## Railway Full-Stack Deploy (Recommended)
+
+Run frontend + backend together in one Railway service.
+
+Required service settings:
+
+- Builder: `Railpack`
+- Build command: `npm install --no-audit --no-fund && npm run build`
+- Start command: `npm run start`
+- Healthcheck path: `/healthz`
+
+This repo also includes `railway.toml` with those defaults.
+
+Notes:
+
+- Do not set `STATIC=true` for this deployment mode.
+- `PORT` is read automatically from Railway.
+- `/wisp/` and `/seal/` are served by `server.js` in this mode.
+
 ## Hosting With GitHub Pages + Wisp Backend
 
 If you host the frontend on GitHub Pages, run a separate Wisp backend on a backend-capable host.
