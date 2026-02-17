@@ -93,8 +93,6 @@ export const resolveProxyMode = (input, prType = 'auto', engine = DEFAULT_ENGINE
       return 'uv';
     case 'scr':
       return 'scr';
-    case 'direct':
-      return 'direct';
     default: {
       const url = check(input, engine);
       return useScrForHost(url) ? 'scr' : 'uv';
@@ -124,7 +122,6 @@ export const process = (input, decode = false, prType = 'auto', engine = DEFAULT
     const final = check(input, searchEngine);
     if (!final) return '';
     const mode = resolveProxyMode(final, prType, searchEngine);
-    if (mode === 'direct') return final;
     const prefix = mode === 'scr' ? withBase('scramjet/') : withBase('uv/service/');
     const encoded = mode === 'scr' ? encodeURIComponent(final) : encoding.enc(final);
     return `${location.protocol}//${location.host}${prefix}${encoded}`;

@@ -26,7 +26,7 @@ export default function Viewer({ src, mode, zoom = 1, wispStatus, onFrameRefChan
   const [loading, setLoading] = useState(Boolean(src));
 
   const staticMode = typeof isStaticBuild !== 'undefined' && isStaticBuild;
-  const canRenderFrame = Boolean(src) && (!staticMode || mode === 'direct' || wispStatus === true);
+  const canRenderFrame = Boolean(src) && (!staticMode || wispStatus === true);
   const showStaticError = staticMode && isProxyMode(mode) && wispStatus === false;
   const showLoading = !showStaticError && (loading || !canRenderFrame);
 
@@ -93,7 +93,7 @@ export default function Viewer({ src, mode, zoom = 1, wispStatus, onFrameRefChan
           return;
         }
       } catch {
-        // Cross-origin frame reads can fail in direct mode; ignore.
+        // Cross-origin frame reads can fail depending on site policy; ignore.
       }
     }
 
