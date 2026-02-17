@@ -2,7 +2,6 @@
   "default": [
     {
       "appName": "App name",
-      "desc": "App description",
       "icon": "",
       "url": "#",
       "disabled": false
@@ -11,49 +10,42 @@
   "apps": [
     {
       "appName": "Twitch",
-      "desc": "Watch and stream games live on Twitch.tv.",
       "icon": "https://img.freepik.com/premium-vector/twitch-logo_578229-259.jpg",
       "url": "https://twitch.tv",
       "disabled": false
     },
     {
       "appName": "YouTube",
-      "desc": "Watch, create, and share videos worldwide.",
       "icon": "https://static.vecteezy.com/system/resources/previews/011/998/173/non_2x/youtube-icon-free-vector.jpg",
       "url": "https://youtube.com",
       "disabled": false
     },
     {
       "appName": "Symbolab",
-      "desc": "Step-by-step math solver powered by Symbolab.",
       "icon": "https://64.media.tumblr.com/58c6456bc6e59a185e50a44e713fcb14/tumblr_nyshf9u2M61qhkxf1_og_1280.png",
       "url": "https://symbolab.com",
       "disabled": false
     },
     {
       "appName": "TikTok",
-      "desc": "Watch, create, and share videos worldwide.",
       "icon": "https://preview.redd.it/tiktok-needs-to-change-their-logo-v0-dsmsdp84l5ad1.jpeg?auto=webp&s=6dc63cd72fb9a48483c88ed6435f6f4f4266db16",
       "url": "https://tiktok.com",
       "disabled": false
     },
     {
       "appName": "Discord",
-      "desc": "Chat, voice, and communities all in one place.",
       "icon": "https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHHFT949fUipzkiFOBH3fAiZZUCdYojwUyX2aTonS1aIwMrx6NUIsHfUHSLzjGJFxxsG72wAo9EWJR4yQWyJJaDaK1XdUso6cUMpI9hAdPUU_FNs11cY1X284vsHrnWtRw7oqRpN1m9YAg21d_aNKnIo-&format=source",
       "url": "https://discord.com/app",
       "disabled": false
     },
     {
       "appName": "Netflix",
-      "desc": "Watch TV shows, movies, and originals.",
       "icon": "https://play-lh.googleusercontent.com/TBRwjS_qfJCSj1m7zZB93FnpJM5fSpMA_wUlFDLxWAb45T9RmwBvQd5cWR5viJJOhkI",
       "url": "https://netflix.com",
       "disabled": false
     },
     {
       "appName": "Google",
-      "desc": "Google.com helps you find anything online.",
       "icon": "/assets/img/goog.webp",
       "url": "https://google.com",
       "disabled": false
@@ -63,7 +55,6 @@
     "Popular": [
       {
         "appName": "GeForce Now",
-        "desc": "All-Time favorites",
         "icon": "/assets/img/geforcenow.webp",
         "url": "https://play.geforcenow.com",
         "disabled": false,
@@ -71,7 +62,6 @@
       },
       {
         "appName": "Neal.fun",
-        "desc": "All-Time favorites",
         "icon": "/assets/img/nf.webp",
         "url": "https://neal.fun",
         "disabled": false,
@@ -79,7 +69,6 @@
       },
       {
         "appName": "Retro Bowl",
-        "desc": "Sport apps",
         "icon": "/assets/img/retro.webp",
         "url": "https://cdn.jsdelivr.net/gh/rewz099/js-lib-cdn/browl-lib.zip",
         "disabled": false,
@@ -89,7 +78,6 @@
     "Games": [
       {
         "appName": "Time Shooter SWAT",
-        "desc": "Fun Action",
         "icon": "/assets/img/time-shooter-3.webp",
         "url": "https://html5.gamedistribution.com/rvvASMiM/6493b872f0564380a7adad671d1e0a57/index.html",
         "disabled": false,
@@ -97,7 +85,6 @@
       },
       {
         "appName": "Dragon vs Bricks",
-        "desc": "Fun Action",
         "icon": "/assets-fb/dragon-vs-bricks/icon.jpg",
         "url": "https://assets.hbmc.net/dragon-vs-bricks/index.html",
         "disabled": false,
@@ -105,7 +92,6 @@
       },
       {
         "appName": "Evil Glitch",
-        "desc": "Fun Action",
         "icon": "/assets-fb/evil-glitch/icon.jpeg",
         "url": "https://assets.hbmc.net/evil-glitch/index.html",
         "disabled": false,
@@ -113,7 +99,6 @@
       },
       {
         "appName": "Froggy's Battle",
-        "desc": "Fun Action",
         "icon": "/assets-fb/froggys-battle/splash.png",
         "url": "https://assets.hbmc.net/froggys-battle/index.html",
         "disabled": false,
@@ -121,7 +106,6 @@
       },
       {
         "appName": "Just One Boss",
-        "desc": "Fun Action",
         "icon": "/assets-fb/just-one-boss/pv1Gr5.png",
         "url": "https://assets.hbmc.net/just-one-boss/index.html",
         "disabled": false,
@@ -129,7 +113,6 @@
       },
       {
         "appName": "Kitchen Gun Game",
-        "desc": "Fun Action",
         "icon": "/assets-fb/kitchen-gun-game/splash.png",
         "url": "https://assets.hbmc.net/kitchen-gun-game/index.html",
         "disabled": false,
@@ -137,7 +120,6 @@
       },
       {
         "appName": "Territorial.io",
-        "desc": "Domination-type fun",
         "icon": "/assets/img/territorial.webp",
         "url": "https://territorial.io",
         "disabled": false,
@@ -145,7 +127,6 @@
       },
       {
         "appName": "Skribbl",
-        "desc": "Fun Action",
         "icon": "/assets/img/skribbl.jfif",
         "url": "https://skribbl.io/",
         "disabled": false,
@@ -153,7 +134,6 @@
       },
             {
         "appName": "Missiles",
-        "desc": "Fun Action",
         "icon": "https://cdn.jsdelivr.net/gh/Skoolgq/Polaris-Assets/missiles/miss.png",
         "url": "https://raw.githack.com/Skoolgq/Polaris-Assets/main/missiles/index.html",
         "disabled": false,
