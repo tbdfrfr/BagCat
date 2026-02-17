@@ -10,7 +10,7 @@
   "apps": [
     {
       "appName": "Twitch",
-      "icon": "https://img.freepik.com/premium-vector/twitch-logo_578229-259.jpg",
+      "icon": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6KPtg-lXkKNUWVjynw9uN4SdMd48Jx0G8iw55B43APWovUqm_:https://coxy.co/wp-content/uploads/2021/05/twitch-logo-icon-2019.jpeg&s",
       "url": "https://twitch.tv",
       "disabled": false
     },
@@ -22,7 +22,7 @@
     },
     {
       "appName": "Symbolab",
-      "icon": "https://64.media.tumblr.com/58c6456bc6e59a185e50a44e713fcb14/tumblr_nyshf9u2M61qhkxf1_og_1280.png",
+      "icon": "https://play-lh.googleusercontent.com/nkTYi15kwQXsyG2yg5KbUS9boGXX0wncVberJtEQcYiaSiCmr9pDb6Mz_Rjipc4CNUbx",
       "url": "https://symbolab.com",
       "disabled": false
     },
