@@ -8,6 +8,7 @@ import versionData from '/src/data/version.json';
 import { useOptions } from '/src/utils/optionsContext';
 
 const STORAGE_KEY = 'bagcat.popup.version';
+const COOKIE_KEY = 'bagcat_popup_version';
 const DEFAULT_ACCENT = '#75b3e8';
 
 const isHex = (value) => typeof value === 'string' && /^#[0-9a-fA-F]{6}$/.test(value.trim());
@@ -17,6 +18,29 @@ const isHomeRoute = (pathname) => pathname === '/' || pathname === '/docs' || pa
 const themeList = Array.isArray(fluidThemes) ? fluidThemes : [];
 const rawVersion = typeof versionData?.value === 'string' ? versionData.value.trim() : '1.0';
 const popupVersion = rawVersion.replace(/^v/i, '') || '1.0';
+
+const readCookie = (name) => {
+  if (typeof document === 'undefined') return '';
+  const key = `${encodeURIComponent(name)}=`;
+  const cookies = document.cookie ? document.cookie.split('; ') : [];
+  for (const entry of cookies) {
+    if (entry.startsWith(key)) {
+      try {
+        return decodeURIComponent(entry.slice(key.length));
+      } catch {
+        return entry.slice(key.length);
+      }
+    }
+  }
+  return '';
+};
+
+const writeCookie = (name, value, days = 365) => {
+  if (typeof document === 'undefined') return;
+  const maxAge = Math.max(1, Math.floor(days * 24 * 60 * 60));
+  const secure = typeof location !== 'undefined' && location.protocol === 'https:' ? '; Secure' : '';
+  document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}; Max-Age=${maxAge}; Path=/; SameSite=Lax${secure}`;
+};
 
 const normalizeConfig = (config) => {
   const normalized = config && typeof config === 'object' ? config : {};
@@ -50,6 +74,7 @@ export default function AnnouncementPopup() {
   }, [options.fluidThemeName]);
 
   const close = useCallback(() => {
+    writeCookie(COOKIE_KEY, popupVersion);
     try {
       localStorage.setItem(STORAGE_KEY, popupVersion);
     } catch {}
@@ -63,7 +88,7 @@ export default function AnnouncementPopup() {
     }
 
     try {
-      const seenVersion = localStorage.getItem(STORAGE_KEY);
+      const seenVersion = readCookie(COOKIE_KEY) || localStorage.getItem(STORAGE_KEY);
       setIsOpen(seenVersion !== popupVersion);
     } catch {
       setIsOpen(true);

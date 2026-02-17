@@ -7,13 +7,13 @@ import { OptionsProvider, useOptions } from './utils/optionsContext';
 import { initPreload } from './utils/preload';
 import FluidBackground from './components/FluidBackground';
 import AnnouncementPopup from './components/AnnouncementPopup';
+import Player from './pages/Player';
 import './index.css';
 import 'nprogress/nprogress.css';
 
 const importGms = () => import('./pages/Apps2');
 
 const Apps2 = lazyLoad(importGms);
-const Player = lazyLoad(() => import('./pages/Player'));
 
 initPreload('/docs', importGms);
 
