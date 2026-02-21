@@ -14,10 +14,3 @@
   font-weight: 550;
   font-size: 21px;
 }
-
-.navItem {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  height: 100%;
-}

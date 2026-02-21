@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { useOptions } from '/src/utils/optionsContext';
-import versionData from '/src/data/version.json';
+import { useOptions } from '../utils/optionsContext';
+import versionData from '../data/version.json';
 import nav from '../styles/nav.module.css';
 import clsx from 'clsx';
 import { memo, useMemo, useCallback } from 'react';

@@ -13,26 +13,16 @@ const getStoredOptions = () => {
 export const OptionsProvider = ({ children }) => {
   const [options, setOptions] = useState(getStoredOptions);
 
+  const updateOption = useCallback((obj) => {
+    if (!obj || typeof obj !== 'object') return;
+    setOptions((prev) => ({ ...prev, ...obj }));
+  }, []);
+
   useEffect(() => {
     try {
       localStorage.setItem('options', JSON.stringify(options));
     } catch {}
   }, [options]);
-
-  const updateOption = useCallback((obj, immediate = true) => {
-    if (!obj || typeof obj !== 'object') return;
-
-    const current = getStoredOptions();
-    const updated = { ...current, ...obj };
-
-    try {
-      localStorage.setItem('options', JSON.stringify(updated));
-    } catch {}
-
-    if (immediate) {
-      setOptions((prev) => ({ ...prev, ...obj }));
-    }
-  }, []);
 
   const contextValue = useMemo(() => ({ options, updateOption }), [options, updateOption]);
 

@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback } from 'react';
-import Search from '/src/pages/Search';
+import Search from '../../pages/Search';
 import { Maximize2, SquareArrowOutUpRight, ZoomIn, ZoomOut, Cloud, HardDrive } from 'lucide-react';
-import { useLocalGmLoader } from '/src/utils/hooks/player/useLocalGmLoader';
+import { useLocalGmLoader } from '../../utils/hooks/player/useLocalGmLoader';
 import Control from './Controls';
 import InfoCard from './InfoCard';
 import clsx from 'clsx';
@@ -99,7 +99,7 @@ const Loader = ({ app }) => {
               sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-pointer-lock"
             />
           ) : (
-            <Search url={app?.url} zoom={zoom} onRemoteFrameChange={setRemoteFrame} />
+            <Search app={app} zoom={zoom} onRemoteFrameChange={setRemoteFrame} />
           )}
         </div>
       </div>

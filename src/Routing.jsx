@@ -6,8 +6,8 @@ const Routing = memo(({ pages }) => {
   return (
     <Suspense fallback={<Fallback />}>
       <Routes>
-        {pages.map((page, index) => (
-          <Route key={`${page.path}-${index}`} path={page.path} element={page.element} />
+        {pages.map((page) => (
+          <Route key={page.path} path={page.path} element={page.element} />
         ))}
       </Routes>
     </Suspense>

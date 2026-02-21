@@ -3,9 +3,9 @@ import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { ExternalLink, X } from 'lucide-react';
 import fluidThemes from '../../fluid-themes.json';
-import popupConfig from '/src/data/popup.json';
-import versionData from '/src/data/version.json';
-import { useOptions } from '/src/utils/optionsContext';
+import popupConfig from '../data/popup.json';
+import versionData from '../data/version.json';
+import { useOptions } from '../utils/optionsContext';
 
 const STORAGE_KEY = 'bagcat.popup.version';
 const COOKIE_KEY = 'bagcat_popup_version';

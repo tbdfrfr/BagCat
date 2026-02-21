@@ -2,8 +2,10 @@ import Nav from '../layouts/Nav';
 import { useState, useMemo, useEffect, useCallback, memo, useRef, lazy, Suspense } from 'react';
 import { Search, LayoutGrid, ChevronLeft, ChevronRight, Settings2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useOptions } from '/src/utils/optionsContext';
+import { useOptions } from '../utils/optionsContext';
 import { resolveAssetUrl } from '../utils/assetUrl';
+import { fetchCatalog } from '../utils/api';
+import { normalizeCatalog } from '../../shared/catalog.js';
 import styles from '../styles/apps.module.css';
 import clsx from 'clsx';
 import BackgroundSettings from '../components/BackgroundSettings';
@@ -15,7 +17,6 @@ const AppCard = memo(({ app, onClick, fallbackMap, onImgError, itemStyles, isPop
 
   return (
     <div
-      key={app.appName}
       className={clsx(
         'flex-shrink-0',
         itemStyles.app,
@@ -103,9 +104,9 @@ const CategoryRow = memo(({ category, games, onClick, onViewMore, fallback, onIm
         )}
         style={isPopular ? undefined : { scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        {games.map((game) => (
+        {games.map((game, index) => (
           <AppCard
-            key={game.appName}
+            key={game.id || `${category}-${game.appName}-${index}`}
             app={game}
             onClick={onClick}
             fallbackMap={fallback}
@@ -126,14 +127,28 @@ const Games = memo(() => {
   const [data, setData] = useState({});
   const [apps, setApps] = useState([]);
   useEffect(() => {
-    let a = true;
-    import('../data/apps.json').then((m) => {
-      if (!a) return;
-      setData(m.default?.games || {});
-      setApps(m.default?.apps || []);
-    });
+    let mounted = true;
+    const controller = new AbortController();
+
+    const applyCatalog = (catalogLike) => {
+      const normalized = normalizeCatalog(catalogLike);
+      if (!mounted) return;
+      setData(normalized.games || {});
+      setApps(normalized.apps || []);
+    };
+
+    fetchCatalog(controller.signal)
+      .then((remoteCatalog) => {
+        applyCatalog(remoteCatalog);
+      })
+      .catch(async () => {
+        const local = await import('../data/apps.json');
+        applyCatalog(local.default || {});
+      });
+
     return () => {
-      a = false;
+      mounted = false;
+      controller.abort();
     };
   }, []);
 
@@ -310,9 +325,9 @@ const Games = memo(() => {
       {q || category || showDl ? (
         <>
           <div className="flex flex-wrap justify-center pb-2">
-            {filtered.paged.map((game) => (
+            {filtered.paged.map((game, index) => (
               <AppCard
-                key={game.appName}
+                key={game.id || `filtered-${game.appName}-${index}`}
                 app={game}
                 onClick={navApp}
                 fallbackMap={fallback}
@@ -357,14 +372,14 @@ const Games = memo(() => {
                 category="Popular"
                 games={popularGames}
                 onClick={navApp}
-              onViewMore={handleViewMore}
-              fallback={fallback}
-              onImgError={handleImgError}
-              styles={styles}
-              isPopular
-            />
-          </div>
-        )}
+                onViewMore={handleViewMore}
+                fallback={fallback}
+                onImgError={handleImgError}
+                styles={styles}
+                isPopular
+              />
+            </div>
+          )}
 
           {apps.length > 0 && (
             <div className="mb-3 max-w-7xl mx-auto px-9">
@@ -374,7 +389,7 @@ const Games = memo(() => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center pb-2 max-w-[84rem] mx-auto">
                 {apps.map((app, idx) => (
                   <AppCard
-                    key={`${app.appName}-app-${idx}`}
+                    key={app.id || `${app.appName}-app-${idx}`}
                     app={app}
                     onClick={navApp}
                     fallbackMap={fallback}
@@ -394,7 +409,7 @@ const Games = memo(() => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center pb-2 max-w-[84rem] mx-auto">
                 {otherGames.map((game, idx) => (
                   <AppCard
-                    key={`${game.appName}-${idx}`}
+                    key={game.id || `${game.appName}-${idx}`}
                     app={game}
                     onClick={navApp}
                     fallbackMap={fallback}

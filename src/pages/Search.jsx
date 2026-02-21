@@ -1,54 +1,83 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import Viewer from '/src/components/loader/Viewer';
-import useReg from '/src/utils/hooks/loader/useReg';
-import { process, resolveProxyMode } from '/src/utils/hooks/loader/utils';
-import { useOptions } from '../utils/optionsContext';
+import { useCallback, useEffect, useState } from 'react';
+import Viewer from '../components/loader/Viewer';
+import useReg from '../utils/hooks/loader/useReg';
+import { launchGame } from '../utils/api';
+import { withBase } from '../utils/assetUrl';
 
-export default function Search({ url, zoom, onRemoteFrameChange }) {
-  const { options } = useOptions();
+const DEFAULT_MODE = 'uv';
+
+export default function Search({ app, zoom, onRemoteFrameChange }) {
   const { proxyReady, wispStatus } = useReg();
-  const [attemptIndex, setAttemptIndex] = useState(0);
+  const [attempt, setAttempt] = useState(0);
+  const [launchPath, setLaunchPath] = useState('');
+  const [launchMode, setLaunchMode] = useState(DEFAULT_MODE);
+  const [launchError, setLaunchError] = useState('');
 
-  const preferredMode = useMemo(
-    () => resolveProxyMode(url, options.prType || 'auto', options.engine || null),
-    [url, options.prType, options.engine],
-  );
-
-  const attemptModes = useMemo(() => {
-    const type = options.prType || 'auto';
-    if (type !== 'auto') return [preferredMode];
-
-    const modes = [preferredMode];
-    if (preferredMode !== 'uv') modes.push('uv');
-    if (preferredMode !== 'scr') modes.push('scr');
-    return modes;
-  }, [preferredMode, options.prType]);
-
-  useEffect(() => {
-    setAttemptIndex(0);
-  }, [url, options.prType, options.engine]);
-
-  const activeMode = attemptModes[Math.min(attemptIndex, attemptModes.length - 1)] || preferredMode;
-
-  const frameUrl = useMemo(() => {
-    if (!url) return '';
-    if (!proxyReady) return '';
-    return process(url, false, activeMode, options.engine || null);
-  }, [url, activeMode, proxyReady, options.engine]);
+  const gameId = typeof app?.id === 'string' ? app.id : '';
 
   const handleFrameIssue = useCallback(() => {
-    if (!frameUrl) return;
-    setAttemptIndex((current) => Math.min(current + 1, Math.max(0, attemptModes.length - 1)));
-  }, [frameUrl, attemptModes.length]);
+    setAttempt((value) => value + 1);
+  }, []);
+
+  useEffect(() => {
+    setAttempt(0);
+    setLaunchPath('');
+    setLaunchMode(DEFAULT_MODE);
+    setLaunchError('');
+  }, [gameId]);
+
+  useEffect(() => {
+    if (!gameId) {
+      setLaunchError('Game is unavailable.');
+      return undefined;
+    }
+    if (!proxyReady) return undefined;
+
+    let mounted = true;
+    const controller = new AbortController();
+
+    setLaunchPath('');
+    setLaunchError('');
+
+    launchGame(gameId, controller.signal)
+      .then((payload) => {
+        if (!mounted) return;
+        const nextPath = typeof payload?.playUrl === 'string' ? payload.playUrl : '';
+        if (!nextPath) {
+          setLaunchError('Launch failed. Please try again.');
+          return;
+        }
+        setLaunchPath(nextPath);
+        setLaunchMode(payload?.mode === 'scr' ? 'scr' : 'uv');
+      })
+      .catch((error) => {
+        if (!mounted || error?.name === 'AbortError') return;
+        setLaunchError('Launch failed. Please try again.');
+      });
+
+    return () => {
+      mounted = false;
+      controller.abort();
+    };
+  }, [proxyReady, gameId, attempt]);
+
+  const frameUrl = launchPath ? withBase(launchPath) : '';
 
   return (
-    <Viewer
-      src={frameUrl}
-      mode={activeMode}
-      zoom={zoom}
-      wispStatus={wispStatus}
-      onFrameRefChange={onRemoteFrameChange}
-      onFrameIssue={handleFrameIssue}
-    />
+    <div className="relative w-full h-full">
+      <Viewer
+        src={frameUrl}
+        mode={launchMode}
+        zoom={zoom}
+        wispStatus={wispStatus}
+        onFrameRefChange={onRemoteFrameChange}
+        onFrameIssue={handleFrameIssue}
+      />
+      {launchError && (
+        <div className="absolute inset-0 z-30 grid place-items-center text-sm text-white/75 px-6 text-center bg-[#070e15]/80">
+          {launchError}
+        </div>
+      )}
+    </div>
   );
 }

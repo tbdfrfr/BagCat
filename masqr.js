@@ -1,6 +1,5 @@
 import fs from "fs"
 import path from "path"
-import fetch from "node-fetch"
 
 export const LICENSE_SERVER_URL = "http://localhost:8004/validate?license="
 export const whiteListedDomains = []
@@ -47,7 +46,7 @@ export async function MasqrMiddleware(req, reply) {
     return
   }
 
-  const [user, pass] = Buffer.from(authHeader.split(" ")[1], "base64").toString().split(":")
+  const [, pass] = Buffer.from(authHeader.split(" ")[1], "base64").toString().split(":")
 
   try {
     const licenseRes = await fetch(`${LICENSE_SERVER_URL}${pass}&host=${req.headers.host}`)

@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Check, X } from 'lucide-react';
 import clsx from 'clsx';
-import { useOptions } from '/src/utils/optionsContext';
+import { useOptions } from '../utils/optionsContext';
 import fluidThemes from '../../fluid-themes.json';
 
 const DEFAULT_SOLID_COLOR = '#000000';

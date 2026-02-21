@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { useOptions } from '/src/utils/optionsContext';
+import { useOptions } from '../utils/optionsContext';
 import fluidThemes from '../../fluid-themes.json';
 
 const vertexShaderSource = `#version 300 es

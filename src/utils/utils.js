@@ -1,32 +1,36 @@
 import pkg from '../../package.json';
+import { meta } from './config.js';
+
 let blur, focus, panicListener;
 
 const ckOff = () => {
   const op = JSON.parse(localStorage.options || '{}');
-  import('./config.js').then(({ meta }) => {
-    const { tabName: t, tabIcon: i } = op;
-    const { tabName: ogName, tabIcon: ogIcon } = meta[0].value;
-    const set = (title, icon) => {
-      document.title = title;
-      document.querySelector("link[rel~='icon']")?.setAttribute('href', icon);
+  const { tabName: t, tabIcon: i } = op;
+  const { tabName: ogName, tabIcon: ogIcon } = meta[0].value;
+  const set = (title, icon) => {
+    document.title = title;
+    document.querySelector("link[rel~='icon']")?.setAttribute('href', icon);
+  };
+
+  blur && window.removeEventListener('blur', blur);
+  focus && window.removeEventListener('focus', focus);
+
+  if (op.clkOff) {
+    set(t, i);
+    blur = () => {
+      const latest = JSON.parse(localStorage.options || '{}');
+      set(latest.tabName || ogName, latest.tabIcon || ogIcon);
     };
-    blur && window.removeEventListener('blur', blur);
-    focus && window.removeEventListener('focus', focus);
-    if (op.clkOff) {
-      set(t, i);
-      blur = () => {
-        const op = JSON.parse(localStorage.options || '{}');
-        set(op.tabName || ogName, op.tabIcon || ogIcon);
-      };
-      focus = () => set(ogName, ogIcon);
-      window.addEventListener('blur', blur);
-      window.addEventListener('focus', focus);
-      set(ogName, ogIcon);
-    } else {
-      set(t || ogName, i || ogIcon);
-      blur = focus = null;
-    }
-  });
+    focus = () => set(ogName, ogIcon);
+    window.addEventListener('blur', blur);
+    window.addEventListener('focus', focus);
+    set(ogName, ogIcon);
+    return;
+  }
+
+  set(t || ogName, i || ogIcon);
+  blur = null;
+  focus = null;
 };
 
 const panic = () => {

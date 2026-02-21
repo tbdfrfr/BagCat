@@ -12,6 +12,13 @@ import { baremuxPath } from '@mercuryworkshop/bare-mux/node';
 import { scramjetPath } from '@mercuryworkshop/scramjet/path';
 import { uvPath } from '@titaniumnetwork-dev/ultraviolet';
 import dotenv from 'dotenv';
+import {
+  createCatalogLoader,
+  resolveProxyMode,
+  createPlayPath,
+  getEntryTargetUrl,
+  createLaunchStore,
+} from './shared/launch.js';
 
 dotenv.config();
 const useBare = process.env.BARE === 'false' ? false : true;
@@ -30,8 +37,19 @@ const normalizeBase = (p) => {
 const base = normalizeBase(basePath);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const catalogPath = resolve(__dirname, 'src/data/apps.json');
+const whitelistPath = resolve(__dirname, 'src/data/whitelist.json');
 logging.set_level(logging.NONE);
 let bare;
+const CATALOG_CACHE_MS = Number(process.env.CATALOG_CACHE_MS || 5000);
+const LAUNCH_TTL_MS = Number(process.env.LAUNCH_TTL_MS || 10 * 60 * 1000);
+const SCRAMJET_ENABLED = process.env.SCRAMJET === 'true';
+const loadCatalog = createCatalogLoader({
+  catalogPath,
+  whitelistPath,
+  cacheMs: CATALOG_CACHE_MS,
+});
+const launchStore = createLaunchStore(LAUNCH_TTL_MS);
 
 Object.assign(wisp.options, {
   dns_method: 'resolve',
@@ -43,6 +61,43 @@ const routeRequest = (req, resOrSocket, head) => {
   if (req.url?.startsWith('/wisp/')) return wisp.routeRequest(req, resOrSocket, head);
   if (bare.shouldRoute(req))
     return head ? bare.routeUpgrade(req, resOrSocket, head) : bare.routeRequest(req, resOrSocket);
+};
+
+const parseRequestJson = (req) =>
+  new Promise((resolve, reject) => {
+    let body = '';
+    req.on('data', (chunk) => {
+      body += chunk;
+      if (body.length > 1_000_000) reject(new Error('payload_too_large'));
+    });
+    req.on('end', () => {
+      if (!body) {
+        resolve({});
+        return;
+      }
+      try {
+        resolve(JSON.parse(body));
+      } catch {
+        reject(new Error('invalid_json'));
+      }
+    });
+    req.on('error', reject);
+  });
+
+const writeJson = (res, code, payload) => {
+  const body = JSON.stringify(payload);
+  res.statusCode = code;
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Cache-Control', 'no-store');
+  res.end(body);
+};
+
+const basePrefix = base === '/' ? '' : base.endsWith('/') ? base.slice(0, -1) : base;
+const stripBasePath = (pathname) => {
+  if (!basePrefix) return pathname;
+  if (pathname === basePrefix) return '/';
+  if (pathname.startsWith(`${basePrefix}/`)) return pathname.slice(basePrefix.length);
+  return pathname;
 };
 
 const obf = {
@@ -71,8 +126,6 @@ const obf = {
 };
 
 export default defineConfig(({ command }) => {
-  const environment = isStatic ? 'static' : command === 'serve' ? 'dev' : 'stable';
-
   return {
     base,
     plugins: [
@@ -105,18 +158,95 @@ export default defineConfig(({ command }) => {
         },
       },
       {
-        name: 'search',
+        name: 'launch-api',
         apply: 'serve',
-        configureServer(s) {
-          s.middlewares.use('/return', async (req, res) => {
-            const q = new URL(req.url, 'http://x').searchParams.get('q');
-            try {
-              const r = q && (await fetch(`https://duckduckgo.com/ac/?q=${encodeURIComponent(q)}`));
-              res.setHeader('Content-Type', 'application/json');
-              res.end(JSON.stringify(r ? await r.json() : { error: 'query parameter?' }));
-            } catch {
-              res.end(JSON.stringify({ error: 'request failed' }));
+        configureServer(server) {
+          const cleanup = setInterval(() => {
+            launchStore.purgeExpired();
+          }, 60_000);
+
+          server.httpServer?.on('close', () => clearInterval(cleanup));
+
+          server.middlewares.use(async (req, res, next) => {
+            const pathname = stripBasePath(new URL(req.url || '/', 'http://localhost').pathname);
+            const method = String(req.method || 'GET').toUpperCase();
+
+            if (pathname === '/api/catalog' && method === 'GET') {
+              try {
+                const catalog = await loadCatalog();
+                writeJson(res, 200, { apps: catalog.apps, games: catalog.games });
+              } catch {
+                writeJson(res, 500, { error: 'catalog_unavailable' });
+              }
+              return;
             }
+
+            if (pathname === '/api/launch' && method === 'POST') {
+              try {
+                const body = await parseRequestJson(req);
+                const id = typeof body?.id === 'string' ? body.id.trim() : '';
+                if (!id) {
+                  writeJson(res, 400, { error: 'id_required' });
+                  return;
+                }
+
+                const catalog = await loadCatalog();
+                const entry = catalog.index.get(id);
+                if (!entry) {
+                  writeJson(res, 404, { error: 'game_not_found' });
+                  return;
+                }
+                if (entry.disabled) {
+                  writeJson(res, 403, { error: 'game_disabled' });
+                  return;
+                }
+                if (entry.local) {
+                  writeJson(res, 400, { error: 'local_game_not_proxyable' });
+                  return;
+                }
+
+                const targetUrl = getEntryTargetUrl(entry);
+                if (!targetUrl) {
+                  writeJson(res, 400, { error: 'invalid_target_url' });
+                  return;
+                }
+
+                const mode = resolveProxyMode({
+                  entry,
+                  targetUrl,
+                  whitelist: catalog.whitelist,
+                  scramjetEnabled: SCRAMJET_ENABLED,
+                });
+                const playPath = createPlayPath({
+                  targetUrl,
+                  mode,
+                  requestHost: req.headers.host,
+                });
+                const token = launchStore.issue({ playPath, mode, gameId: entry.id });
+                writeJson(res, 200, { playUrl: `/play/${token}/`, mode, gameId: entry.id });
+              } catch {
+                writeJson(res, 500, { error: 'launch_failed' });
+              }
+              return;
+            }
+
+            const playMatch = pathname.match(/^\/play\/([^/]+)\/?$/);
+            if (playMatch && method === 'GET') {
+              const token = playMatch[1];
+              const session = launchStore.read(token);
+              if (!session) {
+                res.statusCode = 404;
+                res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+                res.end('Launch session expired');
+                return;
+              }
+              res.statusCode = 302;
+              res.setHeader('Location', session.playPath);
+              res.end();
+              return;
+            }
+
+            next();
           });
         },
       },
@@ -177,7 +307,6 @@ export default defineConfig(({ command }) => {
       },
     },
     define: {
-      __ENVIRONMENT__: JSON.stringify(environment),
       isStaticBuild: JSON.stringify(isStatic),
     },
   };

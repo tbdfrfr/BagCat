@@ -5,15 +5,12 @@ const lazyWrapper = (importFn) => {
   return lazy(() => {
     NProgress.start();
     return importFn()
-      .then((module) => {
-        NProgress.done();
-        return module;
-      })
+      .then((module) => module)
       .catch((err) => {
-        NProgress.done();
         console.error('Lazy loading failed:', err);
         throw err;
-      });
+      })
+      .finally(() => NProgress.done());
   });
 };
 

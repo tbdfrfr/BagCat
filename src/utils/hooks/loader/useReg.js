@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { BareMuxConnection } from '@mercuryworkshop/bare-mux';
-import { useOptions } from '/src/utils/optionsContext';
+import { useOptions } from '../../optionsContext';
 import { fetchW as returnWServer } from './findWisp';
 
 const base = import.meta.env.BASE_URL || '/';
 const withBase = (p) => `${base}${String(p || '').replace(/^\/+/, '')}`;
+const scramjetEnabled = import.meta.env.VITE_ENABLE_SCRAMJET === 'true';
 const normalizeWispEndpoint = (value) => {
   if (typeof value !== 'string') return '';
   let out = value.trim();
@@ -24,10 +25,10 @@ const normalizeWispEndpoint = (value) => {
 
   return out;
 };
-const swTargets = [
-  { path: withBase('uv/sw.js') },
-  { path: withBase('s_sw.js'), scope: withBase('scramjet/') },
-];
+const swTargets = [{ path: withBase('uv/sw.js') }];
+if (scramjetEnabled) {
+  swTargets.push({ path: withBase('s_sw.js'), scope: withBase('scramjet/') });
+}
 
 let runtimeInitPromise = null;
 let swInitPromise = null;
@@ -102,6 +103,19 @@ async function ensureServiceWorkers() {
   try {
     if (!swInitPromise) {
       swInitPromise = (async () => {
+        if (!scramjetEnabled) {
+          try {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(
+              regs
+                .filter((reg) => String(reg?.scope || '').includes('/scramjet/'))
+                .map((reg) => reg.unregister().catch(() => {})),
+            );
+          } catch {
+            // Ignore cleanup failures and continue with UV registration.
+          }
+        }
+
         for (const sw of swTargets) {
           try {
             const reg = await navigator.serviceWorker.register(
@@ -137,7 +151,13 @@ export default function useReg() {
       mounted && setProxyReady(false);
       mounted && setWispStatus(staticMode ? 'init' : null);
 
-      await ensureRuntime();
+      if (scramjetEnabled) {
+        try {
+          await ensureRuntime();
+        } catch (err) {
+          console.warn('Scramjet runtime init failed; continuing with UV only.', err);
+        }
+      }
       await ensureServiceWorkers();
 
       const connection = new BareMuxConnection(withBase('baremux/worker.js'));

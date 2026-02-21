@@ -1,21 +1,25 @@
 import Routing from './Routing';
 import ReactGA from 'react-ga4';
 import lazyLoad from './lazyWrapper';
-import { useEffect, useMemo, memo } from 'react';
+import { useEffect, memo } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { OptionsProvider, useOptions } from './utils/optionsContext';
-import { initPreload } from './utils/preload';
 import FluidBackground from './components/FluidBackground';
 import AnnouncementPopup from './components/AnnouncementPopup';
 import Player from './pages/Player';
 import './index.css';
 import 'nprogress/nprogress.css';
 
-const importGms = () => import('./pages/Apps2');
+const importGms = () => import('./layouts/Apps2');
 
 const Apps2 = lazyLoad(importGms);
 
-initPreload('/docs', importGms);
+const pages = [
+  { path: '/', element: <Navigate to="/docs" replace /> },
+  { path: '/docs', element: <Apps2 /> },
+  { path: '/docs/r', element: <Player /> },
+  { path: '*', element: <Navigate to="/docs" replace /> },
+];
 
 function useTracking() {
   const location = useLocation();
@@ -33,16 +37,6 @@ const MainApp = memo(() => {
   const { options } = useOptions();
   const fluidEnabled = options.fluidBackgroundEnabled !== false;
   const appBackground = fluidEnabled ? '#000000' : readSolidBackground(options.solidBackgroundColor);
-
-  const pages = useMemo(
-    () => [
-      { path: '/', element: <Navigate to="/docs" replace /> },
-      { path: '/docs', element: <Apps2 /> },
-      { path: '/docs/r', element: <Player /> },
-      { path: '*', element: <Navigate to="/docs" replace /> },
-    ],
-    [],
-  );
 
   return (
     <>

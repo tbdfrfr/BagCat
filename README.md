@@ -33,6 +33,49 @@ BagCat Is an online proxy service that serves many fun games!
 <br>
 Join our discord to request games/features, report bugs, and join the community! [Discord link]
 
+<<<<<<< HEAD
+=======
+## Quick Start (Full App)
+
+This project is now backend-driven for game launches and catalog data.
+
+Run locally:
+
+```bash
+npm install
+npm run build
+npm run start
+```
+
+Open `http://localhost:2345`.
+
+Core flow:
+
+- Frontend requests game catalog from `GET /api/catalog`.
+- User selects a game.
+- Frontend requests launch session from `POST /api/launch` with `id`.
+- Backend returns `/play/<token>/`.
+- `GET /play/<token>/` redirects into proxy path (`/uv/service/...` or `/scramjet/...`).
+
+## Railway Full-Stack Deploy (Recommended)
+
+Run frontend + backend together in one Railway service.
+
+Required service settings:
+
+- Builder: `Railpack`
+- Build command: `npm install --no-audit --no-fund && npm run build`
+- Start command: `npm run start`
+- Healthcheck path: `/healthz`
+
+This repo also includes `railway.toml` with those defaults.
+
+Notes:
+
+- Do not set `STATIC=true` for this deployment mode.
+- `PORT` is read automatically from Railway.
+- `/wisp/` and `/seal/` are served by `server.js` in this mode.
+>>>>>>> bb08310 (Changed how the frontend/backend behaves, optimized, cleaned up spagetti code)
 
 ## Hosting With GitHub Pages + Wisp Backend
 

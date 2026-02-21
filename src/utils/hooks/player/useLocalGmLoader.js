@@ -8,23 +8,39 @@ export const useLocalGmLoader = (app) => {
   const [loader] = useState(() => new LocalGmLoader());
 
   useEffect(() => {
-    if (app?.local && app?.url) {
-      loadGm();
-    }
-  }, [app]);
+    let mounted = true;
+    const gameUrl = app?.url;
 
-  const loadGm = async () => {
-    try {
-      setLoading(true);
-      const result = await loader.load(app.url, setDownloading);
-      setGmUrl(result.url);
-      setLoading(false);
-    } catch (err) {
-      console.error('error loading gm:', err);
+    if (!app?.local || !gameUrl) {
+      setGmUrl(null);
       setLoading(false);
       setDownloading(false);
+      return () => {
+        mounted = false;
+      };
     }
-  };
+
+    (async () => {
+      try {
+        setLoading(true);
+        const result = await loader.load(gameUrl, (isDownloading) => {
+          if (mounted) setDownloading(Boolean(isDownloading));
+        });
+        if (mounted) setGmUrl(result.url);
+      } catch (err) {
+        console.error('error loading gm:', err);
+      } finally {
+        if (mounted) {
+          setLoading(false);
+          setDownloading(false);
+        }
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [app?.local, app?.url, loader]);
 
   return { gmUrl, loading, downloading };
 };
