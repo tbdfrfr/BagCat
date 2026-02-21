@@ -33,7 +33,7 @@ BagCat Is an online proxy service that serves many fun games!
 <br>
 Join our discord to request games/features, report bugs, and join the community! [Discord link]
 
-=======
+
 ## Quick Start (Full App)
 
 This project is now backend-driven for game launches and catalog data.
