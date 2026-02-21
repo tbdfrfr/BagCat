@@ -15,7 +15,7 @@
 
 
 
-BagCat Is an online proxy service that gets around those <i>Pesky<i> web filters! 
+BagCat Is an online proxy service that serves many fun games!
 
 <details>
   <summary>Games/apps currently included:</summary>
