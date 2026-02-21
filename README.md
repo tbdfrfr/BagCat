@@ -33,7 +33,6 @@ BagCat Is an online proxy service that serves many fun games!
 <br>
 Join our discord to request games/features, report bugs, and join the community! [Discord link]
 
-<<<<<<< HEAD
 =======
 ## Quick Start (Full App)
 
@@ -57,61 +56,4 @@ Core flow:
 - Backend returns `/play/<token>/`.
 - `GET /play/<token>/` redirects into proxy path (`/uv/service/...` or `/scramjet/...`).
 
-## Railway Full-Stack Deploy (Recommended)
 
-Run frontend + backend together in one Railway service.
-
-Required service settings:
-
-- Builder: `Railpack`
-- Build command: `npm install --no-audit --no-fund && npm run build`
-- Start command: `npm run start`
-- Healthcheck path: `/healthz`
-
-This repo also includes `railway.toml` with those defaults.
-
-Notes:
-
-- Do not set `STATIC=true` for this deployment mode.
-- `PORT` is read automatically from Railway.
-- `/wisp/` and `/seal/` are served by `server.js` in this mode.
->>>>>>> bb08310 (Changed how the frontend/backend behaves, optimized, cleaned up spagetti code)
-
-## Hosting With GitHub Pages + Wisp Backend
-
-### 1) Deploy the Wisp backend
-
-This repo now includes a minimal backend entry:
-
-- `wisp-backend.js`
-- health check: `GET /healthz`
-- websocket endpoint: `wss://<your-domain>/wisp/`
-
-Start command:
-
-```bash
-npm ci
-npm run start:wisp
-```
-
-Your host must support WebSocket upgrades and HTTPS.
-
-### 2) Point the frontend to your Wisp backend
-
-Set this at build-time for static deployments:
-
-```bash
-VITE_WISP_URL=wss://<your-domain>/wisp/
-```
-
-If you use this repo's GitHub Pages workflow, set a repository variable named `VITE_WISP_URL` with that value, then build/deploy as usual.
-
-### 3) Optional runtime override (without rebuilding)
-
-In browser devtools:
-
-```js
-const current = JSON.parse(localStorage.getItem('options') || '{}');
-localStorage.setItem('options', JSON.stringify({ ...current, wServer: 'wss://<your-domain>/wisp/' }));
-location.reload();
-```
