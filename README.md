@@ -57,6 +57,7 @@ Core flow:
 - `GET /play/<token>/` redirects into proxy path (`/uv/service/...` or `/scramjet/...`).
 
 My silly notes for later :3
+
 npm ci && npm run build
 npm run start
 
