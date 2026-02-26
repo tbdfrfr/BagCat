@@ -1,26 +1,5 @@
 import "./styles.css";
 
-document.querySelector("#app").innerHTML = `
-  <canvas id="fluidCanvas"></canvas>
-
-  <div class="footer-text">
-    BagCat is built on principles of pedagogy and experiential learning, combining Bloom's taxonomy with scaffolding techniques to create an adaptive learning environment. Through differentiated instruction, formative and summative assessments, and problem-based learning methodologies, we implement outcome-based education that emphasizes competency development and proficiency attainment. Our curriculum integrates STEM education with universal design for learning principles, ensuring inclusive classroom practices. We leverage educational technology, blended learning, and gamification to promote metacognition, transfer of learning, and spaced repetition. Our pedagogical approach encompasses constructivism, progressive education, and critical pedagogy, supported by guided practice, modeling, and think-aloud strategies. We believe in holistic student support through mentoring, academic coaching, and enrichment programs that foster achievement and bridge learning gaps through continuous progress monitoring and benchmark assessments.
-  </div>
-
-  <div class="container">
-    <div class="content">
-      <div class="text-container">
-        <div class="logo-container">
-          <img src="/header-image.png" alt="BagCat Logo" class="logo" />
-        </div>
-
-        <h1>Under Construction</h1>
-        <p class="subtitle">We'll be back soon with something great</p>
-      </div>
-    </div>
-  </div>
-`;
-
 const vertexShaderSource = `#version 300 es
 precision highp float;
 
