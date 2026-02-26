@@ -1,0 +1,13 @@
+name: bagcat
+services:
+- name: bagcat
+  github:
+    repo: tbdfrfr/BagCat
+    branch: Under-construction
+  source_dir: /
+  build_command: npm ci && npm run build
+  run_command: npm run start
+  http_port: 2345
+  envs:
+  - key: NODE_ENV
+    value: production
