@@ -123,7 +123,7 @@ Homepage
 Geforce Now
 <img width="1856" height="942" alt="image" src="https://github.com/user-attachments/assets/606c4f35-0b36-4e3e-bed6-959d3f1b12a8" />
 
-Balatro theme ^.^
+Balatro theme :D
 <img width="1867" height="991" alt="image" src="https://github.com/user-attachments/assets/da7bf350-d41f-42d8-9ecc-7b9c8b369c34" />
 
 
