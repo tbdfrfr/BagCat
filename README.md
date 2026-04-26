@@ -41,8 +41,7 @@ This project is now backend-driven for game launches and catalog data.
 Run locally:
 
 ```bash
-npm install
-npm run build
+npm ci && npm run build
 npm run start
 ```
 
@@ -56,9 +55,5 @@ Core flow:
 - Backend returns `/play/<token>/`.
 - `GET /play/<token>/` redirects into proxy path (`/uv/service/...` or `/scramjet/...`).
 
-My silly notes for later :3                                            
-
-npm ci && npm run build
-npm run start
 
 
