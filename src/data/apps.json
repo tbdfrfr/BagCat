@@ -73,13 +73,6 @@
         "url": "https://cdn.jsdelivr.net/gh/rewz099/js-lib-cdn/browl-lib.zip",
         "disabled": false,
         "local": true
-      },
-      {
-        "appName": "xbox cloud gaming",
-        "icon": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGt2UAkcc03fc6k2Q-Lzm9zaBwmugtnbTPijYdvNih2JwSZ8WsMIOhXClG4kMyGgXDZcjITs6FdIKwNv2qjspFtghrc-QVfDpnm--9px4&s=10",
-        "url": "https://www.xbox.com/en-us/play",
-        "disabled": false,
-        "local": false
       }
     ],
     "Games": [
